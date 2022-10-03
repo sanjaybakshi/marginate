@@ -80,11 +80,11 @@ class Tstroke
 
 	if (this._fMode == this.eModes.kEraserMode) {
 	    ctx.globalCompositeOperation = 'destination-out';
-	    console.log("eraser")
+	    //console.log("eraser")
 	} else {
 	    //ctx.globalCompositeOperation = 'destination-out';
 
-	    console.log("paint")
+	    //console.log("paint")
 	}
 	
 	for (let i=0; i < this._pointList.length-1; i++) {
