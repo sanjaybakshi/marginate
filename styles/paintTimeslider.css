@@ -1,0 +1,74 @@
+@import './vars.css';
+
+.paint-time-slider {
+    position: absolute;
+    
+    display: grid;
+    //grid-column-gap: 5rem;
+    align-items: center;
+    justify-items: center;
+
+    grid-template-columns: 1fr minmax(75%,80%) 1fr;
+    background-color: whitesmoke;
+    //background-color: black;
+    height: 10%;
+    //border-style: solid;
+
+
+}
+
+.PlayBtn {
+    //border-style: solid;
+    //margin: 10%;
+    //padding: 10%;
+    -webkit-appearance: none;
+
+    //height: 70%;
+    //width:  70%;
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+}
+
+.PlaySlider {
+    //border-style: solid;    
+
+    -webkit-appearance: none;
+    width: 100%;
+    border-radius: 8px;
+    height: 2px;
+    outline: none;
+    data-color: #00f;
+}
+
+.PlayFrameNum {
+    //border-style: solid;
+    border-style: none;
+    -webkit-appearance: none;
+    outline: none;
+
+    background: transparent;
+    //background-color:rgba(0, 0, 0, 0.05);
+    //border: none;
+    text-align:center;
+    font-size:24px;
+    color: dimgray;
+    border-bottom-style: dashed;
+    //padding: 2px;
+
+    //height: 70%;
+    //width:  70%;
+
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border-style: none;
+    height: 16px;
+    width:  16px;
+    //height: 50%;
+    //width: 50%;
+    border-radius: 50%;
+    background: dimgray;
+    margin-top: -4px;
+}

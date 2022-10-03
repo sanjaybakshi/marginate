@@ -1,0 +1,83 @@
+@import './vars.css';
+
+.paint-toolbar-container {
+
+    display: inline-flex;
+    background-color:      var(--toolbar-background-color);
+    border-radius:         var(--toolbar-border-radius);
+
+    align-items: center; 
+    padding:     0.5em;
+    text-align:  center;
+
+    user-select: none; /* can't be selected. */
+}
+
+/* This is here for debugging */
+.paint-toolbar-item {
+    box-sizing:       border-box;
+    border:           1px solid midnightblue;
+    padding:          10px;
+    margin:           10px;
+    background-color: green;
+}
+
+.paint-toolbar-item:hover {
+    background-color: var(--toolbutton-hover-bgcolor);
+    border-radius:    var(--toolbutton-hover-border-radius);
+}
+
+
+.paint-toolbar-item-image {
+    width:      36px;
+    height:     36px;    
+    box-sizing: border-box;
+    /* this is the padding around the image. */
+    padding:    0.5em;    
+}
+
+.paint-toolbar-item-seperator {
+/*    border-style: dotted; */
+
+/*    box-sizing:       border-box; */
+/*    border:           1px solid midnightblue; */
+    padding:          2px;
+    margin:           5px;
+    background-color: green;
+    
+    /*
+    margin: 6px 0; 
+    background: blue;
+*/
+}
+
+.paint-toolbar-item-image:hover {
+    background-color: var(--toolbutton-hover-bgcolor);
+    border-radius:    var(--toolbutton-hover-border-radius);
+}
+
+.paint-toolbar-item-color {
+    width:      36px;
+    height:     36px;
+    box-sizing: border-box;
+    padding:    0.5em;    
+}
+
+.paint-toolbar-item-color:hover {
+    background-color: var(--toolbutton-hover-bgcolor);
+    border-radius:    var(--toolbutton-hover-border-radius);
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    border:             0;
+    background-color:   rgba(0,0,0,0);
+    overflow:           hidden;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+}

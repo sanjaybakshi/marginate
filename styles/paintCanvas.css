@@ -1,0 +1,10 @@
+@import './vars.css';
+
+.paint-canvas {
+    background-color: lightgrey;
+    /*background-color: white;*/
+    position: absolute;
+    border:           1px solid midnightblue;
+
+    user-select: none; /* can't be selected. */
+}

@@ -1,0 +1,36 @@
+@import './vars.css';
+
+/* Easy to debug with
+   border-style: dotted;
+*/
+
+
+.paint-stroke-properties-container {
+    display:          none;            /* Hidden by default */
+    position:         absolute;        /* Stay in place */
+    z-index:          1;               /* Sit on top */
+    padding:	      10px;
+    background-color: var(--window-background-color);
+    margin: 0px;
+    border-radius: 12px;
+    box-shadow: 0px 3px 15px rgba(0,0,0,0.2);
+}
+
+.slider-container {
+
+    display: flex;
+    background-color:      var(--slider-background-color);
+    align-items: center;
+}
+
+.slider-label {
+    flex-basis: 50px;
+}
+
+.slider-range {
+    flex-grow: 1;
+}
+
+.slider-number {
+    flex-basis: 50px;
+}
