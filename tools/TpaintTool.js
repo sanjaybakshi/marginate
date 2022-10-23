@@ -1,9 +1,9 @@
-import Ttool       from "./libs/Ttool.js"
-import Tstroke     from "./libs/Tstroke.js"
-import Tpointer    from "./libs/Tpointer.js";
+import Ttool       from "../libs/Ttool.js"
+import Tstroke     from "../libs/Tstroke.js"
+import Tpointer    from "../libs/Tpointer.js";
 
 
-import { fModel } from './TmarginateModel.js'
+import { fModel } from '../TmarginateModel.js'
 
 
 class TpaintTool extends Ttool

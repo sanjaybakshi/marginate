@@ -1,7 +1,11 @@
-import Ttoolbar  from "./libs/Ttoolbar.js"
-import TcssUtils from "./libs/TcssUtils.js"
+import Ttoolbar     from "./libs/Ttoolbar.js"
+import TcssUtils    from "./libs/TcssUtils.js"
+import TpopupButton from "./libs/TpopupButton.js"
 
-import TpaintTool from "./TpaintTool.js"
+import TstrokePropertiesWnd from "./tools/TstrokePropertiesWnd.js"
+import TmainMenuOptionsWnd  from "./tools/TmainMenuOptionsWnd.js"
+
+import TpaintTool from "./tools/TpaintTool.js"
 
 
 class TmarginateToolbar extends Ttoolbar
@@ -15,15 +19,40 @@ class TmarginateToolbar extends Ttoolbar
 
 	this.gPaintBrushId            = "paintBrushId"	
 	this.gPaintEraserId           = "paintEraserId"
+	this.gPaintRectangleId        = "paintRectangleId"	
+	this.gPaintCircleId           = "paintCircleId"
 
+	this.gPaintStrokePropertiesId = "paintStrokePropertiesId"
+
+	this.gMainMenuId              = "menuButtonId"
+	this.gMainMenuOptionsId       = "menuOptionsId"
+	
+	
 	this._paintBrushCtrl  = document.getElementById(this.gPaintBrushId)
 	this.respondToClick(this._paintBrushCtrl)
 
 	this._paintEraserCtrl  = document.getElementById(this.gPaintEraserId)
 	this.respondToClick(this._paintEraserCtrl)
 
+	this._paintRectangleCtrl  = document.getElementById(this.gPaintRectangleId)
+	this.respondToClick(this._paintRectangleCtrl)
+
+	this._paintCircleCtrl  = document.getElementById(this.gPaintCircleId)
+	this.respondToClick(this._paintCircleCtrl)
+
+	this._strokePropertiesWnd      = new TstrokePropertiesWnd(this.gPaintStrokePropertiesId)
+	this._paintStrokePropertiesBtn = new TpopupButton(this.gPaintStrokeId,
+							  this._strokePropertiesWnd)
+
+	this._mainMenuOptionsWnd       = new TmainMenuOptionsWnd(this.gMainMenuOptionsId)
+	this._mainMenuBtn              = new TpopupButton(this.gMainMenuId,
+							  this._mainMenuOptionsWnd)
+	
+	
 	this.fPaintTool = new TpaintTool()
 	this._currentTool = this.fPaintTool
+
+	this.activateToolStyle(this._paintBrushCtrl)
 	
     }
 
@@ -34,32 +63,59 @@ class TmarginateToolbar extends Ttoolbar
 	});
     }
 
-    toolChange(e)
+
+    activateToolStyle(toolButtonCtrl)
     {
 	const toolButtonPressColor      = TcssUtils.getCssVariableValue('--toolbutton-press-color')
-	const toolButtonBackgroundColor = TcssUtils.getCssVariableValue('--toolbar-background-color')
 	const toolButtonBorderRad       = TcssUtils.getCssVariableValue('--toolButton-press-border-radius')
 
+	toolButtonCtrl.style.backgroundColor = toolButtonPressColor
+	toolButtonCtrl.style.borderRadius    = toolButtonBorderRad
+    }
+
+    deactivateToolStyle(toolButtonCtrl)
+    {
+	const toolButtonBackgroundColor = TcssUtils.getCssVariableValue('--toolbar-background-color')
+
+	toolButtonCtrl.style.backgroundColor = toolButtonBackgroundColor
+    }
+
+    
+    toolChange(e)
+    {
+
 	if (e.target.id == this.gPaintBrushId) {
-	    this._paintBrushCtrl.style.backgroundColor = toolButtonPressColor
-	    this._paintBrushCtrl.style.borderRadius    = toolButtonBorderRad
+	    this.activateToolStyle(this._paintBrushCtrl)
+	    
+	    this.deactivateToolStyle(this._paintEraserCtrl)
+	    this.deactivateToolStyle(this._paintRectangleCtrl)
+	    this.deactivateToolStyle(this._paintCircleCtrl)	    
 
-	    this._paintEraserCtrl.style.backgroundColor = toolButtonBackgroundColor
-
-
-	    console.log("paint mode")
 	    this.fPaintTool.setPaintMode()	    
+
 	} else if (e.target.id == this.gPaintEraserId) {
-	    this._paintEraserCtrl.style.backgroundColor = toolButtonPressColor
-	    this._paintEraserCtrl.style.borderRadius    = toolButtonBorderRad
-
-	    this._paintBrushCtrl.style.backgroundColor = toolButtonBackgroundColor
-	    this._paintBrushCtrl.style.borderRadius    = toolButtonBorderRad
-
+	    console.log("eraser")
+	    this.activateToolStyle(this._paintEraserCtrl)
+	    
+	    this.deactivateToolStyle(this._paintBrushCtrl)
+	    this.deactivateToolStyle(this._paintRectangleCtrl)
+	    this.deactivateToolStyle(this._paintCircleCtrl)	    
 
 	    this.fPaintTool.setEraserMode()
+
+	} else if (e.target.id == this.gPaintRectangleId) {
+	    this.activateToolStyle(this._paintRectangleCtrl)
 	    
-	    console.log("eraser mode")	    
+	    this.deactivateToolStyle(this._paintBrushCtrl)
+	    this.deactivateToolStyle(this._paintEraserCtrl)
+	    this.deactivateToolStyle(this._paintCircleCtrl)	    
+
+	} else if (e.target.id == this.gPaintCircleId) {
+	    this.activateToolStyle(this._paintCircleCtrl)
+	    
+	    this.deactivateToolStyle(this._paintBrushCtrl)
+	    this.deactivateToolStyle(this._paintEraserCtrl)
+	    this.deactivateToolStyle(this._paintRectangleCtrl)	    
 	}
 
 	//this._currentTool.engage()

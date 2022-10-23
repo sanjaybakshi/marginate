@@ -63,7 +63,7 @@ class TmarginateCanvas extends Tcanvas
 	
 	this.fContext.font = '18px ' + 'Avenir'
 	this.fContext.textBaseline = 'top';
-	this.fContext.fillText('ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz Sanjay Dutt', 256,256)
+	this.fContext.fillText('A B CDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz Sanjay Dutt', 256,256)
 	this.fContext.restore()	
 	
 	this.fParentVC.vcDraw(this.fContext)
