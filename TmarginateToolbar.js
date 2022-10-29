@@ -6,7 +6,7 @@ import TstrokePropertiesWnd from "./tools/TstrokePropertiesWnd.js"
 import TmainMenuOptionsWnd  from "./tools/TmainMenuOptionsWnd.js"
 
 import TpaintTool     from "./tools/TpaintTool.js"
-import TaddObjectTool from "./Tools/TaddObjectTool.js"
+import TaddObjectTool from "./tools/TaddObjectTool.js"
 
 
 class TmarginateToolbar extends Ttoolbar
