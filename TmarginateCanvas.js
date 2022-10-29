@@ -1,5 +1,5 @@
 import Tcanvas      from "./libs/Tcanvas.js";
-import TplanckWorld from "../planck/TplanckWorld.js";
+import TplanckWorld from "./planck/TplanckWorld.js";
 
 import { fModel }   from './TmarginateModel.js'
 
