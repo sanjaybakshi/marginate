@@ -1,6 +1,7 @@
-import Tcanvas     from "./libs/Tcanvas.js";
+import Tcanvas      from "./libs/Tcanvas.js";
+import TplanckWorld from "../planck/TplanckWorld.js";
 
-import { fModel } from './TmarginateModel.js'
+import { fModel }   from './TmarginateModel.js'
 
 
 class TmarginateCanvas extends Tcanvas
@@ -43,6 +44,8 @@ class TmarginateCanvas extends Tcanvas
 
     drawPlayMode()
     {
+	fModel.fPlanckWorld.step()
+	
 	this.incrementFrame()
 
 	let wh = this.getWidthHeight()
@@ -58,6 +61,9 @@ class TmarginateCanvas extends Tcanvas
 	    this.fContext.drawImage(img, 0, 0, img.width/2, img.height/2)
 	    this.fLastFrameImage = img
 	} 
+
+	fModel.fPlanckWorld.draw(this.fContext, false)
+
 	
 	this.fContext.save()
 	
@@ -93,6 +99,8 @@ class TmarginateCanvas extends Tcanvas
 	} 
 
 
+	fModel.fPlanckWorld.draw(this.fContext, true)
+	
 	this.fContext.save()
 	
 	this.fContext.font = '18px ' + 'Avenir'
@@ -111,13 +119,18 @@ class TmarginateCanvas extends Tcanvas
 
 	f = f + 1
 	
-	if (f > fModel.fTotalNumFrames) {
+	if (f >= fModel.fTotalNumFrames) {
 	    f = 0
 	    this.fLastFrameImage = null
+
+	    fModel.fPlanckWorld.reset()
+	    
 	} else if (f < 0) {
 	    f = 0
 	    this.fLastFrameImage = null	    
 	}
+
+	fModel.fPlanckWorld.setFrame(f)
 	
 	fModel.setFrame(f)
     }

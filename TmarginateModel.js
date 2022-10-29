@@ -1,5 +1,8 @@
-import Tevent      from "./libs/Tevent.js"
-import TimageUtils from "./libs/TimageUtils.js";
+import Tevent       from "./libs/Tevent.js"
+import TimageUtils  from "./libs/TimageUtils.js";
+import TplanckWorld from "./planck/TplanckWorld.js";
+
+
 
 class TmarginateModel {
     constructor()
@@ -19,8 +22,9 @@ class TmarginateModel {
 	this.fFrameImages = []
 
 	this.fCurrentFrame   = 0
-	this.setFrameRange(24)
+	this.setFrameRange(120)
 
+	this.fPlanckWorld = new TplanckWorld(this.fFrameDimensions.width, this.fFrameDimensions.height, 10)
 	
     }
 
@@ -77,7 +81,7 @@ class TmarginateModel {
     {
 	this.fCurrentFrame = f
 	
-	if (this.fCurrentFrame > this.fTotalNumFrames) {
+	if (this.fCurrentFrame >= this.fTotalNumFrames) {
 	    this.fCurrentFrame = 0
 	} else if (this.fCurrentFrame < 0) {
 	    this.fCurrentFrame = 0
@@ -88,7 +92,6 @@ class TmarginateModel {
     
     setFrameRange(fr)
     {
-	console.log("setFrameRange")
 	this.fTotalNumFrames = fr
 	//this._frameRangeChangeEvent.trigger(this._totalNumFrames);
 

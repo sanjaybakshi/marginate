@@ -136,7 +136,7 @@ class Tstroke
 	let width  = hi_x - lo_x;
 	let height = hi_y - lo_y; 
 
-	return {'center' : [lo_x + width / 2.0, lo_y + height / 2.0],
+	return {'center' : {x:lo_x + width / 2.0,y:lo_y + height / 2.0},
 		'width'  : width,
 		'height' : height}
     }

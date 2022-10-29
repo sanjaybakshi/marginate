@@ -5,7 +5,8 @@ import TpopupButton from "./libs/TpopupButton.js"
 import TstrokePropertiesWnd from "./tools/TstrokePropertiesWnd.js"
 import TmainMenuOptionsWnd  from "./tools/TmainMenuOptionsWnd.js"
 
-import TpaintTool from "./tools/TpaintTool.js"
+import TpaintTool     from "./tools/TpaintTool.js"
+import TaddObjectTool from "./Tools/TaddObjectTool.js"
 
 
 class TmarginateToolbar extends Ttoolbar
@@ -49,8 +50,10 @@ class TmarginateToolbar extends Ttoolbar
 							  this._mainMenuOptionsWnd)
 	
 	
-	this.fPaintTool = new TpaintTool()
-	this._currentTool = this.fPaintTool
+	this.fPaintTool     = new TpaintTool()
+	this.fAddObjectTool = new TaddObjectTool()	
+
+	this._currentTool   = this.fPaintTool
 
 	this.activateToolStyle(this._paintBrushCtrl)
 	
@@ -92,7 +95,8 @@ class TmarginateToolbar extends Ttoolbar
 	    this.deactivateToolStyle(this._paintCircleCtrl)	    
 
 	    this.fPaintTool.setPaintMode()	    
-
+	    this._currentTool = this.fPaintTool
+	    
 	} else if (e.target.id == this.gPaintEraserId) {
 	    console.log("eraser")
 	    this.activateToolStyle(this._paintEraserCtrl)
@@ -102,7 +106,8 @@ class TmarginateToolbar extends Ttoolbar
 	    this.deactivateToolStyle(this._paintCircleCtrl)	    
 
 	    this.fPaintTool.setEraserMode()
-
+	    this._currentTool = this.fPaintTool
+	    
 	} else if (e.target.id == this.gPaintRectangleId) {
 	    this.activateToolStyle(this._paintRectangleCtrl)
 	    
@@ -110,12 +115,18 @@ class TmarginateToolbar extends Ttoolbar
 	    this.deactivateToolStyle(this._paintEraserCtrl)
 	    this.deactivateToolStyle(this._paintCircleCtrl)	    
 
+	    this.fAddObjectTool.setRectangleMode()
+	    this._currentTool = this.fAddObjectTool
+	    
 	} else if (e.target.id == this.gPaintCircleId) {
 	    this.activateToolStyle(this._paintCircleCtrl)
 	    
 	    this.deactivateToolStyle(this._paintBrushCtrl)
 	    this.deactivateToolStyle(this._paintEraserCtrl)
-	    this.deactivateToolStyle(this._paintRectangleCtrl)	    
+	    this.deactivateToolStyle(this._paintRectangleCtrl)
+
+	    this.fAddObjectTool.setCircleMode()	    	    
+	    this._currentTool = this.fAddObjectTool	    
 	}
 
 	//this._currentTool.engage()
