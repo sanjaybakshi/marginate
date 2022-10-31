@@ -100,6 +100,10 @@ class TmarginateCanvas extends Tcanvas
 
 
 	fModel.fPlanckWorld.draw(this.fContext, true)
+
+	// Draw the selected objects with different draw characteristics.
+	///
+	fModel.fPlanckWorld.drawAnnotated(this.fContext, fModel.fSelectionList._sList)
 	
 	this.fContext.save()
 	

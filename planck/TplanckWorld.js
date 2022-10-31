@@ -1,14 +1,17 @@
 import TplanckObject from "./TplanckObject.js"
+import Tmath         from "../libs/Tmath.js";
 
-// Update these when the canvas size changes.
+// ALERT: Need to update these when the canvas size changes.
 //
 let fCanvasWidth
 let fCanvasHeight
 
+
+
 let fWorldWidth
 let fWorldHeight
 
-export {fCanvasWidth, fCanvasHeight, fWorldWidth, fWorldHeight}
+//export {fCanvasWidth, fCanvasHeight, fWorldWidth, fWorldHeight}
 
 class TplanckWorld
 {
@@ -21,13 +24,11 @@ class TplanckWorld
 	this._fObjectList  = []
 	this._fJointList   = []
 
-	// Update the global variables.
-	//
 	fCanvasWidth  = canvasWidth
 	fCanvasHeight = canvasHeight
+	
 	fWorldWidth   = worldSize
 	fWorldHeight  = worldSize
-
 	
 	if (fCanvasWidth > fCanvasHeight) {
 	    fWorldWidth  = 10
@@ -65,6 +66,18 @@ class TplanckWorld
 	}
     }
 
+    drawAnnotated(ctx, objList)
+    {
+	for (const b of objList) {
+	    // Check to see if it's part of the world.
+	    //
+	    if (b.isBeingSimulated()) {
+		b.draw(ctx, false, true)
+	    }
+
+	}
+    }
+    
     reset()
     {
 	this._fWorld = null
@@ -130,6 +143,68 @@ class TplanckWorld
 	    obj.addToSimulation(this._fWorld)
 	}
     }
+
+    intersectRect(rect)
+    //
+    // Description:
+    //	    Tests which boxes are in the rectangle defined by (left,top,right,bottom)
+    //
+    {
+	let p1 = TplanckWorld.pixels2world_vec(planck.Vec2(rect.left, rect.top))
+	let w  = TplanckWorld.pixels2world_float(rect.width)
+	let h  = TplanckWorld.pixels2world_float(rect.height)	
+
+	let r1 = {left: p1.x, top: p1.y, width: w, height: h}
+	//console.log(r1)
+	
+	let boxes = []
+        for (const b of this._fObjectList) {		
+	    if (b.isBeingSimulated()) {
+
+		if (b.intersectRect(r1)) {
+		    boxes.push(b)
+		}
+		
+	    }
+	} 
+	return boxes
+    }
+
+    static pixels2world_float(f)
+    {
+	return Tmath.remap(0, fCanvasWidth,  0, fWorldWidth,  f)
+    }
+    
+    static pixels2world_vec(v)
+    {
+	let newVec = planck.Vec2()
+	
+	let x = Tmath.remap(0, fCanvasWidth,  0, fWorldWidth,  v.x)
+	let y = Tmath.remap(0, fCanvasHeight, 0, fWorldHeight, v.y)
+	
+	// flip y
+	y = fWorldHeight - y;
+	
+	newVec.x = x;
+	newVec.y = y;
+	return newVec
+    }
+
+    static world2pixels_vec(v)
+    {
+	let newVec = planck.Vec2()
+	
+	let x = Tmath.remap(0, fWorldWidth,  0, fCanvasWidth,  v.x)
+	let y = Tmath.remap(0, fWorldHeight, 0, fCanvasHeight, v.y)
+	
+	// flip y
+	y = fCanvasHeight - y;
+	
+	newVec.x = x;
+	newVec.y = y;
+	return newVec
+    }
+
 }
 
 export default TplanckWorld

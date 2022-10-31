@@ -1,6 +1,6 @@
 import Tmath        from "../libs/Tmath.js";
+import TplanckWorld from "./TplanckWorld.js";
 
-import {fCanvasWidth, fCanvasHeight, fWorldWidth, fWorldHeight} from './TplanckWorld.js'
 
 class TplanckObject
 {
@@ -21,6 +21,8 @@ class TplanckObject
     
     constructor(pos, width, height, existanceStart, objType, isDynamic=true)
     {
+	this._widthWorld   = TplanckWorld.pixels2world_float(width)
+	this._heightWorld  = TplanckWorld.pixels2world_float(height)
 	
 	this._widthPixels  = width
 	this._heightPixels = height
@@ -38,7 +40,7 @@ class TplanckObject
     setPosition(newPos)
     {
 	this._v_pixels = planck.Vec2(newPos.x, newPos.y)
-	let v_world = this.pixels2world_vec(this._v_pixels) 
+	let v_world = TplanckWorld.pixels2world_vec(this._v_pixels) 
 	this._body_b2d.setPosition(v_world)
     }
 
@@ -100,12 +102,10 @@ class TplanckObject
 	    body.setStatic()
 	}
 
-	let v_world  = this.pixels2world_vec(this._v_pixels) 
+	let v_world  = TplanckWorld.pixels2world_vec(this._v_pixels) 
 	body.setPosition(v_world)
 	
-	let w = Tmath.remap(0, fCanvasWidth,  0, fWorldWidth,  this._widthPixels)
-	let h = Tmath.remap(0, fCanvasHeight, 0, fWorldHeight, this._heightPixels)
-	let shape = planck.Box(w/2, h/2);
+	let shape = planck.Box(this._widthWorld/2, this._heightWorld/2);
 	body.createFixture(shape, 1.0);
 
 	// time to set mass information
@@ -131,26 +131,31 @@ class TplanckObject
     }
 
     
-    draw(ctx, paused, isSelected=false)
+    draw(ctx, paused, annotated=false)
     {
 	let pos_world = this._body_b2d.getPosition();
 	let rot       = this._body_b2d.getAngle();
-	let pos_pixels = this.world2pixels_vec(pos_world)
+	let pos_pixels = TplanckWorld.world2pixels_vec(pos_world)
 
 	ctx.save()
 
 	ctx.beginPath();
 
+	/*
 	if (isSelected == true) {
 	    ctx.lineWidth = 1.5;
 	} else {
 	    ctx.lineWidth = 0.5;
 	}
-	    
+	*/
 	if (this.isDynamic()) {
 	    ctx.strokeStyle = 'black';
 	} else {
 	    ctx.strokeStyle = 'grey';	    
+	}
+
+	if (annotated == true) {
+	    ctx.strokeStyle = 'red';	    
 	}
 
 	if (!paused) {
@@ -194,7 +199,7 @@ class TplanckObject
 	// this is simpler for now.
 	//
 	let pos_world  = this._body_b2d.getPosition();
-	let pos_pixels = this.world2pixels_vec(pos_world)
+	let pos_pixels = TplanckWorld.world2pixels_vec(pos_world)
 	
 	let xCenter = pos_pixels.x
 	let yCenter = pos_pixels.y
@@ -212,35 +217,36 @@ class TplanckObject
 	return this._heightPixels
     }
     
-    pixels2world_vec(v)
-    {
-	let newVec = planck.Vec2()
-	
-	let x = Tmath.remap(0, fCanvasWidth,  0, fWorldWidth,  v.x)
-	let y = Tmath.remap(0, fCanvasHeight, 0, fWorldHeight, v.y)
-	
-	// flip y
-	y = fWorldHeight - y;
-	
-	newVec.x = x;
-	newVec.y = y;
-	return newVec
-    }
 
-    world2pixels_vec(v)
+
+    intersectRect(rect)
+    //
+    // Description:
+    //	    Tests if the object is in the rectangle.
+    //
+
     {
-	let newVec = planck.Vec2()
-	
-	let x = Tmath.remap(0, fWorldWidth,  0, fCanvasWidth,  v.x)
-	let y = Tmath.remap(0, fWorldHeight, 0, fCanvasHeight, v.y)
-	
-	// flip y
-	y = fCanvasHeight - y;
-	
-	newVec.x = x;
-	newVec.y = y;
-	return newVec
+	// loop through all fixtures
+        for (let fixture = this._body_b2d.getFixtureList(); fixture; fixture = fixture.getNext()) {
+	    
+	    let shape = fixture.getShape();
+	    
+	    let numChildren = shape.getChildCount()
+	    
+	    for (let i=0; i < numChildren; i++) {
+		let aabb = fixture.getAABB(i)
+		
+		let boxRect = {x1: aabb.lowerBound.x, y1: aabb.lowerBound.y,
+			       x2: aabb.upperBound.x, y2: aabb.upperBound.y}
+		
+		
+		return Tmath.overlaps({x1: rect.left, y1: rect.top, x2: rect.left+rect.width, y2: rect.top+rect.height},
+				      boxRect)
+	    }
+	}
+	return false
     }
+    
 }
 
 export default TplanckObject

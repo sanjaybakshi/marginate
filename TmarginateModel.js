@@ -1,5 +1,7 @@
-import Tevent       from "./libs/Tevent.js"
-import TimageUtils  from "./libs/TimageUtils.js";
+import Tevent         from "./libs/Tevent.js"
+import TimageUtils    from "./libs/TimageUtils.js";
+import TselectionList from "./libs/TselectionList.js";
+
 import TplanckWorld from "./planck/TplanckWorld.js";
 
 
@@ -25,7 +27,8 @@ class TmarginateModel {
 	this.setFrameRange(120)
 
 	this.fPlanckWorld = new TplanckWorld(this.fFrameDimensions.width, this.fFrameDimensions.height, 10)
-	
+
+	this.fSelectionList = new TselectionList()
     }
 
     setPlayMode()
