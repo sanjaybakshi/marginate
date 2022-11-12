@@ -20,13 +20,13 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 				       this.massChanged)
 
 
-	this.gStaticCheckboxId               = "checkbox.staticId"
-	this.gStaticUntilCollisionCheckboxId = "checkbox.staticUntilCollisionId"	
+	this.gDynamicCheckboxId              = "checkbox.dynamicId"
+	this.gActivateOnCollisionCheckboxId  = "checkbox.activateOnCollisionId"	
 	
-	this._staticCheckBox = new TcheckBox(this.gStaticCheckboxId,
-					     this.staticChanged)
-	this._staticUntilCollisionCheckBox = new TcheckBox(this.gStaticUntilCollisionCheckboxId,
-							   this.staticUntilCollisionChanged)
+	this._dynamicCheckBox = new TcheckBox(this.gDynamicCheckboxId,
+					      this.dynamicChanged.bind(this))
+	this._activateOnCollisionCheckBox = new TcheckBox(this.gActivateOnCollisionCheckboxId,
+							  this.activateOnCollisionChanged)
 
 
 	
@@ -35,8 +35,8 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 	});
 
 	this._massSlider.disable()
-	this._staticCheckBox.disable()
-	this._staticUntilCollisionCheckBox.disable()		
+	this._dynamicCheckBox.disable()
+	this._activateOnCollisionCheckBox.disable()		
     }
 
     massChanged(v)
@@ -44,67 +44,78 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 	console.log(v)
     }
 
-    staticChanged(v)
+    dynamicChanged(v)
     {
-	console.log(v)
-
 	let sList = fModel.fSelectionList._sList
 	for (const sObj of sList) {
-
+	    
+	    console.log(sObj)
+	    
 	    if (v == true) {
-		sObj.setStatic()
-	    } else {
 		sObj.setDynamic()
+	    } else {
+		sObj.setStatic()
 	    }
 	}
+	
+	this.updateUI()
     }
 
-    staticUntilCollisionChanged(v)
+    activateOnCollisionChanged(v)
     {
-	console.log(v)
-	
 	let sList = fModel.fSelectionList._sList	
-	for (const sObj of sList) {
-	    
+	for (const sObj of sList) {	    
 	    sObj.setActivateOnCollision(v)
+	}	
+    }
+
+    updateUI()
+    {
+	let sList = fModel.fSelectionList._sList
+	
+	if (sList.length == 0) {
+	    // Disable the ui-controls.
+	    //
+	    this._massSlider.disable()
+
+	    this._dynamicCheckBox.disable()
+	    this._activateOnCollisionCheckBox.disable()		
+	    
+	} else {
+	    this._massSlider.enable()
+
+	    this._dynamicCheckBox.enable()
+	    this._activateOnCollisionCheckBox.enable()		
+
+	    let allDynamic              = true
+	    let allActivateOnCollision  = true
+
+	    for (const sObj of sList) {
+
+		if (sObj.isDynamic() != true) {
+		    allDynamic = false
+		}
+
+		if (sObj.isActivatedOnCollision() != true) {
+		    allActivateOnCollision = false
+		}
+	    }	    
+	    this._dynamicCheckBox.setValue(allDynamic)
+	    this._activateOnCollisionCheckBox.setValue(allActivateOnCollision)
+
+	    if (allDynamic == false) {
+		// All are static so disable activateOnCollision.
+		//
+		this._activateOnCollisionCheckBox.disable()		
+
+	    }
 	}	
     }
     
     selectionChange(sList)
     {
 	console.log("selection change")
-
-	if (sList.length == 0) {
-	    // Disable the ui-controls.
-	    //
-	    this._massSlider.disable()
-
-	    this._staticCheckBox.disable()
-	    this._staticUntilCollisionCheckBox.disable()		
-	    
-	} else {
-	    this._massSlider.enable()
-
-	    this._staticCheckBox.enable()
-	    this._staticUntilCollisionCheckBox.enable()		
-
-	    let allStatic               = true
-	    let allStaticUntilCollision = true
-
-	    for (const sObj of sList) {
-
-		if (sObj.isDynamic()) {
-		    allStatic = false
-		}
-
-		if (sObj.isActivatedOnCollision()) {
-		    allStaticUntilCollision = false
-		}
-	    }
-
-	    this._staticCheckBox.setValue(allStatic)
-	    this._staticUntilCollisionCheckBox.setValue(allStaticUntilCollision)
-	}
+	this.updateUI()
     }
 }
 

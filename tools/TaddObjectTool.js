@@ -94,7 +94,8 @@ class TaddObjectTool extends Ttool
 
 		    let newBox = fModel.fPlanckWorld.addObject(center, width, height,
 							       fModel.getCurrentFrame(), this._objType)
-		    
+
+		    fModel.fSelectionList.replace([newBox])
 		    //let newBox = fModel.fBox2dWorld.addBox({x:center[0],y:center[1]},
 		    //					   width, height, this.fCanvas.getCurrentFrame())
 		    //newBoxArray.push(newBox)

@@ -142,6 +142,8 @@ class TplanckWorld
 	if (existanceStart == currentFrame) {
 	    obj.addToSimulation(this._fWorld)
 	}
+
+	return obj
     }
 
     intersectRect(rect)

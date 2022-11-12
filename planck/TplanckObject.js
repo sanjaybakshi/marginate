@@ -119,9 +119,9 @@ class TplanckObject
 	});
 	
 	if (this.isActivatedOnCollision()) {
-	    body.setGravityScale(1.0)
-	} else {
 	    body.setGravityScale(0.0)
+	} else {
+	    body.setGravityScale(1.0)
 	}
 	    
 	// Point the box2d object back at Tbox
