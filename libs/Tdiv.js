@@ -77,6 +77,12 @@ class Tdiv
 	return ({width:r.width, height:r.height})
     }
 
+    getBorderSize()
+    {
+	let r = this._div.style.border
+	return r
+    }
+    
     setWidthHeight(wh)
     {
 	this._div.style.width  = wh.width  + "px"
@@ -90,6 +96,16 @@ class Tdiv
 	return ({x:wh.width/2
     }
 */
+
+    enable()
+    {
+	this._div.disabled = false
+    }
+
+    disable()
+    {
+	this._div.disabled = true
+    }
 }
 
 export default Tdiv

@@ -1,0 +1,55 @@
+@import './vars.css';
+
+.object-properties-container {
+    position: absolute; 
+
+
+    display: grid;
+    grid-template-columns: 90%;
+    align-content: start;
+    grid-row-gap: 1em;
+    padding-top: 1em;
+
+    
+    background-color:      var(--toolbar-background-color);
+    border-radius:         var(--toolbar-border-radius);
+
+    box-shadow: 0px 3px 15px rgba(0,0,0,0.2);
+    user-select: none; /* can't be selected. */
+}
+
+.object-properties-item {
+    /* this is the padding around the image. */
+    /*padding:    0.5em; */
+    align-self: start;
+}
+
+.op-container {
+    display: flex;
+    justify-content: center;
+}
+
+
+.flexbox-container {
+    /*position: absolute;*/
+    display: flex;
+}
+
+.flexbox-item {
+    width: 200px;
+    margin: 10px;
+    border: 3px solid #333;
+    backgound-color: #dfdfdf;
+}
+
+.flexbox-item-1 {
+    min-height: 100px;
+}
+
+.flexbox-item-2 {
+    min-height: 200px;
+}
+
+.flexbox-item-3 {
+    min-height: 300px;
+}

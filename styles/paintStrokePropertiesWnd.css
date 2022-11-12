@@ -19,7 +19,7 @@
 .slider-container {
 
     display: flex;
-    background-color:      var(--slider-background-color);
+    /*background-color:      var(--slider-background-color);*/
     align-items: center;
 }
 

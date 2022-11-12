@@ -31,7 +31,7 @@ class TplanckObject
 	this._v_pixels = planck.Vec2(pos.x, pos.y)
 	this._isDynamic = isDynamic
 	
-	this._activateOnCollision = false
+	this._activateOnCollision = true
 	this._isDynamic = true
 	
 	this._objType = objType
@@ -73,7 +73,8 @@ class TplanckObject
     //	   ActivatedOnCollision means that it has experienced at least one collision and then responds to gravity.
     //
     {
-	this._activateOnCollision = activatedState	
+	this._activateOnCollision = activatedState
+	console.log(this._activateOnCollision)
     }
     
     isActivatedOnCollision()

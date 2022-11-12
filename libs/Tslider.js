@@ -36,6 +36,18 @@ class Tslider
     {
 	return this._sliderCtrl.value
     }
+
+    enable()
+    {
+	this._sliderCtrl.disabled = false
+	this._sliderDataCtrl.disabled = false
+    }
+
+    disable()
+    {
+	this._sliderCtrl.disabled = true
+	this._sliderDataCtrl.disabled = true
+    }
 }
 
 

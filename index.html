@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="styles/mainToolbar.css">
   <link rel="stylesheet" href="styles/paintToolbar.css">
   <link rel="stylesheet" href="styles/paintMenu.css">
+  <link rel="stylesheet" href="styles/objectProperties.css">  
   <link rel="stylesheet" href="styles/paintStrokePropertiesWnd.css">
   <link rel="stylesheet" href="styles/paintCanvas.css">
   <link rel="stylesheet" href="styles/paintTimeslider.css">  
@@ -41,8 +42,45 @@
   <canvas class="paint-canvas" id="paintCanvasId"></canvas>
 
 
+  
+  <!--- Section 3: Properties Panel -->
+
+  <!---  <div class="flexbox-container" id="objectPropertiesId"> 
+
+  <div class="op-container" id="objectPropertiesId">     
+    <div class="flexbox-container">    
+      <div class="flexbox-item flexbox-item-1"></div>
+      <div class="flexbox-item flexbox-item-2"></div>
+      <div class="flexbox-item flexbox-item-3"></div>
+    </div>
+  </div>
+  
+--->
+
+
+  <div class="object-properties-container" id="objectPropertiesId">
     
-  <!--- Section 3: Time Slider -->
+    <div class="object-properties-item">
+      <input type="checkbox" id="checkbox.staticId" name="static" checked>
+      <label for="checkbox.staticId">Static</label>
+    </div>
+    
+    <div class="object-properties-item">
+      <input type="checkbox" id="checkbox.staticUntilCollisionId" name="staticUntilCollision" checked>
+      <label for="checkbox.staticUntilCollisionId">Static Until Collision</label>
+    </div>
+
+    <div class="slider-container object-properties-item">
+      <p class="slider-label">Mass</p>
+      <input class="slider-range" type="range"  min="0" max="100" value="100" data-color="#f00" id="slider.massId">
+      <input class="slider-number" type="number" min="0" max="100" value="100"                   id="number.massId">
+    </div>    
+  </div>
+
+
+  
+    
+  <!--- Section 4: Time Slider -->
   <div class="paint-time-slider" id="playBackCtrl">
     <input class="PlayBtn" type="image" id="playPauseBtn" src="./icons/Play2.png">    
     <input class="PlaySlider" type="range" id="playSlider"/>
@@ -80,6 +118,9 @@
 
   </div>
 
+
+
+  
   
 
   <script type="module" src="planck/lib/planck.js"> </script>
