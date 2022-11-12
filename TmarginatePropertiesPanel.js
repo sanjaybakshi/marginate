@@ -1,6 +1,6 @@
 import TpropertiesPanel from "./libs/TpropertiesPanel.js"
-import Tslider          from "../libs/Tslider.js"
-import TcheckBox        from "../libs/TcheckBox.js"
+import Tslider          from "./libs/Tslider.js"
+import TcheckBox        from "./libs/TcheckBox.js"
 
 
 import { fModel } from './TmarginateModel.js'
