@@ -86,12 +86,41 @@ class TmarginateModel {
 	
 	if (this.fCurrentFrame >= this.fTotalNumFrames) {
 	    this.fCurrentFrame = 0
+
+	    this.fPlanckWorld.reset()
+	    
 	} else if (this.fCurrentFrame < 0) {
 	    this.fCurrentFrame = 0
 	}
 	
+	this.fPlanckWorld.setFrame(this.fCurrentFrame)	    
+
 	this.fFrameChangeEvent.trigger(this.fCurrentFrame)
     }
+
+    incrementFrame()
+    {
+	let f = this.fCurrentFrame
+
+	f = f + 1
+	
+	if (f >= this.fTotalNumFrames) {
+	    f = 0
+	    this.fPlanckWorld.reset()
+	    this.fPlanckWorld.setFrame(f)
+	    
+	} else if (f < 0) {
+	    f = 0
+	    this.fPlanckWorld.setFrame(f)
+	    
+	} else {
+	    this.fPlanckWorld.setFrame(f)	    
+	    this.fPlanckWorld.step()
+	}
+	this.fCurrentFrame = f
+	this.fFrameChangeEvent.trigger(this.fCurrentFrame)	
+    }
+    
     
     setFrameRange(fr)
     {

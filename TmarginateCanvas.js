@@ -44,9 +44,7 @@ class TmarginateCanvas extends Tcanvas
 
     drawPlayMode()
     {
-	fModel.fPlanckWorld.step()
-	
-	this.incrementFrame()
+	fModel.incrementFrame()
 
 	let wh = this.getWidthHeight()
 	this.fContext.clearRect(0, 0, wh.width, wh.height)
@@ -117,28 +115,6 @@ class TmarginateCanvas extends Tcanvas
 	window.requestAnimationFrame(this.draw);
     }
 
-    incrementFrame()
-    {
-	let f = fModel.getCurrentFrame()
-
-	f = f + 1
-	
-	if (f >= fModel.fTotalNumFrames) {
-	    f = 0
-	    this.fLastFrameImage = null
-
-	    fModel.fPlanckWorld.reset()
-	    
-	} else if (f < 0) {
-	    f = 0
-	    this.fLastFrameImage = null	    
-	}
-
-	fModel.fPlanckWorld.setFrame(f)
-	
-	fModel.setFrame(f)
-    }
-    
     setWidthHeight(wh)
     {
 	super.setWidthHeight(wh)
