@@ -7,6 +7,7 @@ class TplanckObject
     _widthPixels;
     _heightPixels;
     _existanceStart;
+    _isActive;
     _isDynamic;
     _activateOnCollision;
 
@@ -19,7 +20,7 @@ class TplanckObject
     _objType;
     
     
-    constructor(pos, width, height, existanceStart, objType, isDynamic=true)
+    constructor(pos, width, height, existanceStart, objType, isDynamic=true, isActive=true)
     {
 	this._widthWorld   = TplanckWorld.pixels2world_float(width)
 	this._heightWorld  = TplanckWorld.pixels2world_float(height)
@@ -30,9 +31,9 @@ class TplanckObject
 
 	this._v_pixels = planck.Vec2(pos.x, pos.y)
 	this._isDynamic = isDynamic
+	this._isActive  = isActive
 	
 	this._activateOnCollision = true
-	this._isDynamic = true
 	
 	this._objType = objType
     }
@@ -67,6 +68,30 @@ class TplanckObject
 	}
     }
 
+
+    isActive()
+    {
+	return this._isActive
+    }
+
+    setActive()
+    {
+	this._isActive = true
+	
+	if (this._body_b2d != null) {
+	    this._body_b2d.setActive(true)
+	}
+    }
+    
+    setInActive()
+    {
+	this._isActive = false
+	
+	if (this._body_b2d != null) {
+	    this._body_b2d.setActive(false)
+	}
+    }
+    
     setActivateOnCollision(activatedState)
     //
     // Description:
@@ -101,6 +126,13 @@ class TplanckObject
 	    body.setDynamic()
 	} else {
 	    body.setStatic()
+	}
+
+	
+	if (this._isActive) {
+	    body.setActive(true)
+	} else {
+	    body.setActive(false)
 	}
 
 	let v_world  = TplanckWorld.pixels2world_vec(this._v_pixels) 
@@ -220,34 +252,51 @@ class TplanckObject
     
 
 
-    intersectRect(rect)
+    intersectRect(rectWorldSpace, rectPixelSpace)
     //
     // Description:
     //	    Tests if the object is in the rectangle.
     //
 
     {
-	// loop through all fixtures
-        for (let fixture = this._body_b2d.getFixtureList(); fixture; fixture = fixture.getNext()) {
+	if (this.isActive()) {
 	    
-	    let shape = fixture.getShape();
-	    
-	    let numChildren = shape.getChildCount()
-	    
-	    for (let i=0; i < numChildren; i++) {
-		let aabb = fixture.getAABB(i)
+	    // loop through all fixtures
+            for (let fixture = this._body_b2d.getFixtureList(); fixture; fixture = fixture.getNext()) {
+		let shape = fixture.getShape();
+		console.log(shape)
+		let numChildren = shape.getChildCount()
 		
-		let boxRect = {x1: aabb.lowerBound.x, y1: aabb.lowerBound.y,
-			       x2: aabb.upperBound.x, y2: aabb.upperBound.y}
-		
-		
-		return Tmath.overlaps({x1: rect.left, y1: rect.top, x2: rect.left+rect.width, y2: rect.top+rect.height},
+		for (let i=0; i < numChildren; i++) {
+		    
+		    let aabb = fixture.getAABB(i)
+		    
+		    let boxRect = {x1: aabb.lowerBound.x, y1: aabb.lowerBound.y,
+				   x2: aabb.upperBound.x, y2: aabb.upperBound.y}
+		    
+		    return Tmath.overlaps({x1: rectWorldSpace.left, y1: rectWorldSpace.top, x2: rectWorldSpace.left+rectWorldSpace.width, y2: rectWorldSpace.top+rectWorldSpace.height},
 				      boxRect)
+		}
 	    }
+	    
+	} else {
+
+	    // Inactive objects need to be handled separately.
+	    //
+	    let pos_world = this._body_b2d.getPosition();
+	    let pos_pixels = TplanckWorld.world2pixels_vec(pos_world)
+
+	    let boxRect = {x1: pos_pixels.x - this._widthPixels/2, y1: pos_pixels.y - this._heightPixels/2,
+			   x2: pos_pixels.x + this._widthPixels/2, y2: pos_pixels.y + this._heightPixels/2}
+
+	    console.log(boxRect)
+	    return Tmath.overlaps({x1: rectPixelSpace.left, y1: rectPixelSpace.top, x2: rectPixelSpace.left+rectPixelSpace.width, y2: rectPixelSpace.top+rectPixelSpace.height},
+				      boxRect)
+
 	}
-	return false
-    }
     
+	return false    
+    }
 }
 
 export default TplanckObject

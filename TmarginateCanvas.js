@@ -1,6 +1,8 @@
 import Tcanvas      from "./libs/Tcanvas.js";
 import TplanckWorld from "./planck/TplanckWorld.js";
 
+import ThtmlUtils   from "./libs/ThtmlUtils.js"
+
 import { fModel }   from './TmarginateModel.js'
 
 
@@ -30,6 +32,27 @@ class TmarginateCanvas extends Tcanvas
 	    this.pointerUp(e);
 	});
 
+	// Hand drag and drop.
+	//
+	this._div.addEventListener('drop', (e) => {
+	    this.onDrop(e);
+	});
+
+	this._div.addEventListener('dragover', (e) => {
+	    this.onDragOver(e);
+	});
+
+	this._div.addEventListener('dragenter', (e) => {
+	    this.onDragEnter(e);
+	});
+
+	// Handle copy and paste.
+	//
+	document.onpaste = this.onPaste.bind(this)
+
+
+	this.fDebugImg = null
+	
 	this.fLastFrameImage = null
     }
 
@@ -96,7 +119,10 @@ class TmarginateCanvas extends Tcanvas
 	    this.fLastFrameImage = img
 	} 
 
-
+	if (this.fDebugImg != null) {
+	    this.fContext.drawImage(this.fDebugImg, 0, 0, this.fDebugImg.width/2, this.fDebugImg.height/2)
+	}
+	
 	fModel.fPlanckWorld.draw(this.fContext, true)
 
 	// Draw the selected objects with different draw characteristics.
@@ -136,8 +162,35 @@ class TmarginateCanvas extends Tcanvas
     {
 	this.fParentVC.vcPointerMove(e, this)
     }    
-    
 
+    // Handle drag and drop.
+    //
+    onDragOver(e)
+    {	
+	e.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.	
+	e.preventDefault()
+    }
+
+    onDragEnter(e)
+    {
+	e.preventDefault()
+    }
+
+    onDrop(e)
+    {
+	e.preventDefault()
+    }
+
+    // Handle copy and paste.
+    //	
+    async onPaste(e)
+    {
+	e.preventDefault()
+	
+	var pastedImage = await ThtmlUtils.clipboard2image(e)
+
+	this.fDebugImg = pastedImage
+    }
 }
 
 export default TmarginateCanvas

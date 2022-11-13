@@ -146,24 +146,24 @@ class TplanckWorld
 	return obj
     }
 
-    intersectRect(rect)
+    intersectRect(rectPixelSpace)
     //
     // Description:
     //	    Tests which boxes are in the rectangle defined by (left,top,right,bottom)
     //
     {
-	let p1 = TplanckWorld.pixels2world_vec(planck.Vec2(rect.left, rect.top))
-	let w  = TplanckWorld.pixels2world_float(rect.width)
-	let h  = TplanckWorld.pixels2world_float(rect.height)	
+	let p1 = TplanckWorld.pixels2world_vec(planck.Vec2(rectPixelSpace.left, rectPixelSpace.top))
+	let w  = TplanckWorld.pixels2world_float(rectPixelSpace.width)
+	let h  = TplanckWorld.pixels2world_float(rectPixelSpace.height)	
 
-	let r1 = {left: p1.x, top: p1.y, width: w, height: h}
+	let rectWorldSpace = {left: p1.x, top: p1.y, width: w, height: h}
 	//console.log(r1)
 	
 	let boxes = []
         for (const b of this._fObjectList) {		
 	    if (b.isBeingSimulated()) {
 
-		if (b.intersectRect(r1)) {
+		if (b.intersectRect(rectWorldSpace, rectPixelSpace)) {
 		    boxes.push(b)
 		}
 		

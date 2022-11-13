@@ -20,9 +20,12 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 				       this.massChanged)
 
 
+	this.gActiveCheckboxId               = "checkbox.activeId"	
 	this.gDynamicCheckboxId              = "checkbox.dynamicId"
 	this.gActivateOnCollisionCheckboxId  = "checkbox.activateOnCollisionId"	
 	
+	this._activeCheckBox = new TcheckBox(this.gActiveCheckboxId,
+					     this.activeChanged.bind(this))
 	this._dynamicCheckBox = new TcheckBox(this.gDynamicCheckboxId,
 					      this.dynamicChanged.bind(this))
 	this._activateOnCollisionCheckBox = new TcheckBox(this.gActivateOnCollisionCheckboxId,
@@ -34,14 +37,30 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 	    this.selectionChange(data)
 	});
 
-	this._massSlider.disable()
+	this._activeCheckBox.disable()	
 	this._dynamicCheckBox.disable()
 	this._activateOnCollisionCheckBox.disable()		
+	this._massSlider.disable()
     }
 
     massChanged(v)
     {
 	console.log(v)
+    }
+
+    activeChanged(v)
+    {
+	let sList = fModel.fSelectionList._sList
+	for (const sObj of sList) {
+	    
+	    if (v == true) {
+		sObj.setActive()
+	    } else {
+		sObj.setInActive()
+	    }
+	}
+	
+	this.updateUI()
     }
 
     dynamicChanged(v)
@@ -76,22 +95,28 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 	if (sList.length == 0) {
 	    // Disable the ui-controls.
 	    //
-	    this._massSlider.disable()
-
+	    this._activeCheckBox.disable()	    
 	    this._dynamicCheckBox.disable()
 	    this._activateOnCollisionCheckBox.disable()		
+
+	    this._massSlider.disable()
 	    
 	} else {
-	    this._massSlider.enable()
-
+	    this._activeCheckBox.enable()	    
 	    this._dynamicCheckBox.enable()
 	    this._activateOnCollisionCheckBox.enable()		
+	    this._massSlider.enable()
 
+	    let allActive               = true
 	    let allDynamic              = true
 	    let allActivateOnCollision  = true
 
 	    for (const sObj of sList) {
 
+		if (sObj.isActive() != true) {
+		    allActive = false
+		}
+		
 		if (sObj.isDynamic() != true) {
 		    allDynamic = false
 		}
@@ -99,7 +124,9 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 		if (sObj.isActivatedOnCollision() != true) {
 		    allActivateOnCollision = false
 		}
-	    }	    
+	    }
+
+	    this._activeCheckBox.setValue(allActive)	    
 	    this._dynamicCheckBox.setValue(allDynamic)
 	    this._activateOnCollisionCheckBox.setValue(allActivateOnCollision)
 

@@ -27,6 +27,38 @@ class TfileUtils
 	link.setAttribute('href', base64)
 	link.click();
     }
+
+    static readFileAsync(blob)
+    {
+	return new Promise((resolve, reject) => {
+	    
+	    let reader = new FileReader()
+
+	    reader.onload = () => {
+		resolve(reader.result);
+	    };
+
+	    reader.onerror = reject;
+
+
+	    reader.readAsDataURL(blob);	
+	})
+    }
+
+    static readImageAsync(file)
+    {
+	return new Promise((resolve, reject) => {
+
+	    let image = new Image()
+	    image.src = file
+
+	    image.onload  = () => {
+		resolve(image)
+	    };
+	    
+	    image.onerror = () => reject
+	})
+    }    
 }
 
 export default TfileUtils
