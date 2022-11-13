@@ -6,5 +6,5 @@
     position: absolute;
     border:           1px solid midnightblue;
 
-    user-select: none; /* can't be selected. */
+    /*user-select: none;*/ /* can't be selected. */
 }
