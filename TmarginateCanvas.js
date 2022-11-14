@@ -1,7 +1,7 @@
 import Tcanvas      from "./libs/Tcanvas.js";
 import TplanckWorld from "./planck/TplanckWorld.js";
 
-import Tpointer     from "../libs/Tpointer.js";
+import Tpointer     from "./libs/Tpointer.js";
 import ThtmlUtils   from "./libs/ThtmlUtils.js"
 
 import { fModel }   from './TmarginateModel.js'
