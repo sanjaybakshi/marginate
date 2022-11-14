@@ -16,7 +16,6 @@ class TpopupWindow extends Tdiv
 
 	
 	window.addEventListener('pointerdown', (e) => {
-	    console.log("window click")
 
 	    if (this.isVisible()) {
 		this.hide()

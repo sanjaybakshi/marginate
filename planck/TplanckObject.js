@@ -1,4 +1,5 @@
 import Tmath        from "../libs/Tmath.js";
+import Tsprite      from "../libs/Tsprite.js";
 import TplanckWorld from "./TplanckWorld.js";
 
 
@@ -11,6 +12,7 @@ class TplanckObject
     _isDynamic;
     _activateOnCollision;
 
+    _sprite;
 
     static eObjectType = {
 	kRectangle : 0,
@@ -36,6 +38,8 @@ class TplanckObject
 	this._activateOnCollision = true
 	
 	this._objType = objType
+
+	this._sprite = new Tsprite()
     }
 
     setPosition(newPos)
@@ -172,6 +176,11 @@ class TplanckObject
 
 	ctx.save()
 
+
+	this._sprite._rot = -rot
+	this._sprite._pos = {x:pos_pixels.x, y:pos_pixels.y}
+	this._sprite.draw(ctx)
+
 	ctx.beginPath();
 
 	/*
@@ -264,7 +273,7 @@ class TplanckObject
 	    // loop through all fixtures
             for (let fixture = this._body_b2d.getFixtureList(); fixture; fixture = fixture.getNext()) {
 		let shape = fixture.getShape();
-		console.log(shape)
+
 		let numChildren = shape.getChildCount()
 		
 		for (let i=0; i < numChildren; i++) {

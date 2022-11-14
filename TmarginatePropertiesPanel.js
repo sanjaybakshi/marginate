@@ -68,8 +68,6 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 	let sList = fModel.fSelectionList._sList
 	for (const sObj of sList) {
 	    
-	    console.log(sObj)
-	    
 	    if (v == true) {
 		sObj.setDynamic()
 	    } else {
@@ -141,7 +139,6 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
     
     selectionChange(sList)
     {
-	console.log("selection change")
 	this.updateUI()
     }
 }

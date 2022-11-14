@@ -57,26 +57,10 @@ class TaddObjectTool extends Ttool
 	
     }
 
-    async pointerUp(e)
+    pointerUp(e)
     {
 	super.pointerUp(e)
 
-	let frameImg = fModel.getFrameImage()
-
-	if (frameImg == null) {
-	    fModel.makeFrameImage()
-	    frameImg = fModel.getFrameImage()
-	}
-	
-	//let strokedImg = await this.fCurrentStroke.drawOnImage(frameImg)
-
-
-	// fModel.setFrameImage(strokedImg)
-
-	
-	//fModel.fPlanckWorld.addObject({x:50,y:50}, 10, 10, 0, fModel.getCurrentFrame(), this._objType)
-	
-	//let newBoxArray = []
 	if (this._strokeStarted) {
 	    // Figure out the box.
 	    //
@@ -89,16 +73,12 @@ class TaddObjectTool extends Ttool
 		// Only make the box if it's big enough.
 		//
 		if (width > 5 && height > 5) {
-		    //let newBox = this.fCanvas._box2dWorld.addBox(center, width, height, this.fCanvas.getCurrentFrame())
 
-
-		    let newBox = fModel.fPlanckWorld.addObject(center, width, height,
-							       fModel.getCurrentFrame(), this._objType)
-
-		    fModel.fSelectionList.replace([newBox])
-		    //let newBox = fModel.fBox2dWorld.addBox({x:center[0],y:center[1]},
-		    //					   width, height, this.fCanvas.getCurrentFrame())
-		    //newBoxArray.push(newBox)
+		    fModel.addObject({center: center,
+				      width: width,
+				      height: height,
+				      currentFrame: fModel.getCurrentFrame(),
+				      objType: this._objType})
 		}
 	    }
 	}

@@ -2,7 +2,8 @@ import Tevent         from "./libs/Tevent.js"
 import TimageUtils    from "./libs/TimageUtils.js";
 import TselectionList from "./libs/TselectionList.js";
 
-import TplanckWorld from "./planck/TplanckWorld.js";
+import TplanckWorld   from "./planck/TplanckWorld.js";
+import TplanckObject  from "./planck/TplanckObject.js";
 
 
 
@@ -145,7 +146,51 @@ class TmarginateModel {
     getDurationInFrames()
     {
 	return this.fTotalNumFrames
-    }	
+    }
+
+    addObject(objDict)
+    {
+	let center       = {x:0,y:0}
+	let width        = 10
+	let height       = 10
+	let currentFrame = 1
+	let objType      = TplanckObject.eObjectType.kRectangle
+	
+	if ('center' in objDict) {
+	    center = objDict.center
+	}
+
+	if ('width' in objDict) {
+	    width = objDict.width
+	}
+
+	if ('height' in objDict) {
+	    height = objDict.height
+	}
+
+	if ('currentFrame' in objDict) {
+	    currentFrame = objDict.currentFrame
+	}
+
+	if ('objType' in objDict) {
+	    objType = objDict.objType
+	}
+	
+	if ('sprite' in objDict) {
+	    width  = objDict.sprite.width
+	    height = objDict.sprite.height 
+	}
+	
+	let newBox = fModel.fPlanckWorld.addObject(center, width, height,
+						   fModel.getCurrentFrame(),
+						   objType)
+	if ('sprite' in objDict) {
+	    newBox._sprite.initBitmap(objDict.sprite, 1.0)
+	}
+	
+	fModel.fSelectionList.replace([newBox])
+	
+    }
 }
 
 const fModel = new TmarginateModel()

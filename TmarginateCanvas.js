@@ -1,6 +1,7 @@
 import Tcanvas      from "./libs/Tcanvas.js";
 import TplanckWorld from "./planck/TplanckWorld.js";
 
+import Tpointer     from "../libs/Tpointer.js";
 import ThtmlUtils   from "./libs/ThtmlUtils.js"
 
 import { fModel }   from './TmarginateModel.js'
@@ -51,8 +52,6 @@ class TmarginateCanvas extends Tcanvas
 	document.onpaste = this.onPaste.bind(this)
 
 
-	this.fDebugImg = null
-	
 	this.fLastFrameImage = null
     }
 
@@ -119,10 +118,6 @@ class TmarginateCanvas extends Tcanvas
 	    this.fLastFrameImage = img
 	} 
 
-	if (this.fDebugImg != null) {
-	    this.fContext.drawImage(this.fDebugImg, 0, 0, this.fDebugImg.width/2, this.fDebugImg.height/2)
-	}
-	
 	fModel.fPlanckWorld.draw(this.fContext, true)
 
 	// Draw the selected objects with different draw characteristics.
@@ -189,7 +184,14 @@ class TmarginateCanvas extends Tcanvas
 	
 	var pastedImage = await ThtmlUtils.clipboard2image(e)
 
-	this.fDebugImg = pastedImage
+	let pointerInfo = Tpointer.getPointer(e)
+	pointerInfo.x = 100
+	pointerInfo.y = 100
+	
+	console.log(pointerInfo)
+	fModel.addObject({center: {x:pointerInfo.x, y: pointerInfo.y},
+			  sprite:  pastedImage})
+	
     }
 }
 
