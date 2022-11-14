@@ -20,7 +20,7 @@ class TmarginateModel {
 
 	this.fPauseAnim      = true
 	
-	this.fFrameDimensions = {width:512,height:512}
+	this.fFrameDimensions = {width:700,height:700}
 
 	this.fFrameImages = []
 

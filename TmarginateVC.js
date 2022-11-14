@@ -30,15 +30,11 @@ class TmarginateVC
 
     layoutControls()
     {
+	let propertiesPanelWidth = 210
+	
 	let newWindowWidth  = window.innerWidth
 	let newWindowHeight = window.innerHeight
-	
-	let canvasWidthHeight = this.fCanvas.getWidthHeight()
-	let x = newWindowWidth  / 2 - canvasWidthHeight.width/2
-	let y = newWindowHeight / 2 - canvasWidthHeight.height/2
-	
-	this.fCanvas.showAt({x:x,y:y})
-	
+		
 	let sliderWH = this.fPlaybackSlider.getWidthHeight()
 	this.fPlaybackSlider.setWidthHeight({width: window.innerWidth, height: sliderWH.height})
 	
@@ -50,6 +46,22 @@ class TmarginateVC
 
 	let timeSliderPos      = this.fPlaybackSlider.getPosition()
 
+
+	
+	let canvasWidthHeight = this.fCanvas.getWidthHeight()
+	console.log(canvasWidthHeight)
+	let x = newWindowWidth  / 2 - (canvasWidthHeight.width+propertiesPanelWidth)/2
+	let y = newWindowHeight / 2 - (canvasWidthHeight.height)/2
+
+	let heightAvailable = timeSliderPos.y - (toolbarPos.y + toolbarWidthHeight.height)
+	let middleHeightY = (toolbarPos.y + toolbarWidthHeight.height) + (heightAvailable/2)
+	
+	y = middleHeightY - canvasWidthHeight.height/2
+
+	console.log(heightAvailable, middleHeightY, y)
+	this.fCanvas.showAt({x:x,y: y})
+
+	
 	console.log(window.innerHeight-sliderWH.height)
 	console.log(timeSliderPos.y)
 	//console.log(toolbarPos.y)
@@ -60,12 +72,9 @@ class TmarginateVC
 	//ppHeight = timeSliderPos.y - (toolbarPos.y + toolbarWidthHeight.height);
 
 	let ppHeight = timeSliderPos.y - (toolbarPos.y + toolbarWidthHeight.height)
-	console.log(ppHeight)
-	console.log(this.fPropertiesPanel.getBorderSize())
 
-	let ppWidth = 250;
-	this.fPropertiesPanel.setWidthHeight({width:ppWidth, height: ppHeight})
-	this.fPropertiesPanel.showAt({x:window.innerWidth - ppWidth, y: toolbarPos.y+toolbarWidthHeight.height})
+	this.fPropertiesPanel.setWidthHeight({width:propertiesPanelWidth, height: ppHeight})
+	this.fPropertiesPanel.showAt({x:window.innerWidth - propertiesPanelWidth, y: toolbarPos.y+toolbarWidthHeight.height})
     }
 
     vcDraw(ctx)

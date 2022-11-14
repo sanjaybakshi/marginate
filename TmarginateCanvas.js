@@ -51,6 +51,7 @@ class TmarginateCanvas extends Tcanvas
 	//
 	document.onpaste = this.onPaste.bind(this)
 
+	this.fMousePosition = null
 
 	this.fLastFrameImage = null
     }
@@ -150,18 +151,25 @@ class TmarginateCanvas extends Tcanvas
 
     pointerUp(e)
     {
-	this.fParentVC.vcPointerUp(e, this)		
+	this.fParentVC.vcPointerUp(e, this)
     }
 
     pointerMove(e)
     {
 	this.fParentVC.vcPointerMove(e, this)
+
+
+	let pointerInfo = Tpointer.getPointer(e)
+	this.fMousePosition = pointerInfo	
     }    
 
     // Handle drag and drop.
     //
     onDragOver(e)
-    {	
+    {
+
+	console.log(pointerInfo)
+	
 	e.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.	
 	e.preventDefault()
     }
@@ -184,12 +192,7 @@ class TmarginateCanvas extends Tcanvas
 	
 	var pastedImage = await ThtmlUtils.clipboard2image(e)
 
-	let pointerInfo = Tpointer.getPointer(e)
-	pointerInfo.x = 100
-	pointerInfo.y = 100
-	
-	console.log(pointerInfo)
-	fModel.addObject({center: {x:pointerInfo.x, y: pointerInfo.y},
+	fModel.addObject({center: {x:this.fMousePosition.x, y: this.fMousePosition.y},
 			  sprite:  pastedImage})
 	
     }
