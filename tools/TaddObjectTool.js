@@ -11,9 +11,9 @@ import { fModel } from '../TmarginateModel.js'
 
 class TaddObjectTool extends Ttool
 {
-    constructor()
+    constructor(canvas)
     {
-	super()
+	super(canvas)
 
 	this.fCurrentStroke = new Tstroke()
 	this._strokeStarted = false

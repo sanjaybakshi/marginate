@@ -9,9 +9,9 @@ import { fModel } from '../TmarginateModel.js'
 
 class TselectTool extends Ttool
 {
-    constructor()
+    constructor(canvas)
     {
-	super()
+	super(canvas)
 
 	this._selectionStarted = false
 

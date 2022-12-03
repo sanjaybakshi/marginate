@@ -8,9 +8,9 @@ import { fModel } from '../TmarginateModel.js'
 
 class TpaintTool extends Ttool
 {
-    constructor()
+    constructor(canvas)
     {
-	super()
+	super(canvas)
 
 	this.fCurrentStroke = new Tstroke()
 	this._strokeStarted = false
