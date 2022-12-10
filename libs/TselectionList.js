@@ -28,7 +28,12 @@ class TselectionList
     {
 	this.fSelectionChangeEvent.trigger(this._sList)	
     }
-    
+
+    remove(item)
+    {
+	this._sList = this._sList.filter(obj => obj != item);	
+	this.fSelectionChangeEvent.trigger(this._sList)	
+    }
 }
 
 export default TselectionList

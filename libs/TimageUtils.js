@@ -1,3 +1,5 @@
+import Trect from "../libs/Trect.js";
+
 class TimageUtils
 {
 
@@ -23,6 +25,16 @@ class TimageUtils
 
 	return canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 	
+    }
+
+    static crop(img, cropRect)
+    {
+	let inMemoryCanvas = new OffscreenCanvas(cropRect.width(), cropRect.height())
+	let inMemoryContext = inMemoryCanvas.getContext("2d");
+
+	inMemoryContext.drawImage(img, cropRect._x1, cropRect._y1, cropRect.width(), cropRect.height(),
+				  0, 0, cropRect.width(), cropRect.height())
+	return(inMemoryCanvas.transferToImageBitmap())
     }
 }
 

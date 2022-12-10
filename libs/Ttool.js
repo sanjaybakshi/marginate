@@ -1,8 +1,8 @@
 class Ttool
 {
-    constructor()
+    constructor(canvas)
     {
-	console.log("what")
+	this.fCanvas = canvas
     }
 
     draw(ctx)

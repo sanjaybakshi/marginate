@@ -146,6 +146,16 @@ class TplanckWorld
 	return obj
     }
 
+    removeObject(b)
+    {
+	b.removeFromSimulation()
+
+	// Delete the object from the list.
+	//
+	this._fObjectList = this._fObjectList.filter(obj => obj != b);	
+	
+    }
+    
     intersectRect(rectPixelSpace)
     //
     // Description:

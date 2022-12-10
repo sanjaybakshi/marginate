@@ -10,7 +10,8 @@
   <link rel="stylesheet" href="styles/objectProperties.css">  
   <link rel="stylesheet" href="styles/paintStrokePropertiesWnd.css">
   <link rel="stylesheet" href="styles/paintCanvas.css">
-  <link rel="stylesheet" href="styles/paintTimeslider.css">  
+  <link rel="stylesheet" href="styles/paintTimeslider.css">
+  <link rel="stylesheet" href="styles/scissorToolExtra.css">    
   
 </head>
 
@@ -28,7 +29,12 @@
       <input class="paint-toolbar-item-image" type="image" src="./icons/Pencil.png"     id="paintBrushId">      
       <input class="paint-toolbar-item-image" type="image" src="./icons/Eraser.png"     id="paintEraserId">
 
-      <input class="paint-toolbar-item-image" type="image" src="./icons/Select.png"     id="selectId">      
+      <input class="paint-toolbar-item-image" type="image" src="./icons/Select.png"     id="selectId">
+      <input class="paint-toolbar-item-image" type="image" src="./icons/Xform.png"      id="xformId">
+
+      <input class="paint-toolbar-item-image" type="image" src="./icons/Split.png"     id="scissorsId">      
+
+      
       <input class="paint-toolbar-item-image" type="image" src="./icons/Rectangle.png"  id="paintRectangleId">
       <input class="paint-toolbar-item-image" type="image" src="./icons/Circle.png"     id="paintCircleId">
     </div>
@@ -124,8 +130,10 @@
   </div>
 
 
-
-  
+  <!--- small button that is used by the scissors tool. --->
+  <div class="scissors-container"    id="scissors.GoDivId">  
+    <button class="scissors-btn" id="scissors.GoBtnId">Go </button>
+  </div>
   
 
   <script type="module" src="planck/lib/planck.js"> </script>

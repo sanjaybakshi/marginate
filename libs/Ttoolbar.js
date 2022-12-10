@@ -4,13 +4,15 @@ import Ttool from "./Ttool.js"
 
 class Ttoolbar extends Tdiv
 {
-    constructor(toolbarId)
+    constructor(toolbarId, canvas)
     {
 	super(toolbarId)
 
 	this._defTool = new Ttool()
 
 	this._currentTool = this._defTool;
+
+	this.fCanvas = canvas
     }
 
     draw(ctx)
@@ -18,20 +20,29 @@ class Ttoolbar extends Tdiv
 	this._currentTool.draw(ctx)
     }    
 
-    pointerDown(e, canvas)
+    pointerDown(e)
     {
-	this._currentTool.pointerDown(e, canvas)
+	this._currentTool.pointerDown(e)
     }
-    pointerMove(e, canvas)
+    pointerMove(e)
     {
-	this._currentTool.pointerMove(e, canvas)	
-    }
-    
-    pointerUp(e, canvas)
-    {
-	this._currentTool.pointerUp(e, canvas)		
+	this._currentTool.pointerMove(e)	
     }
     
+    pointerUp(e)
+    {
+	this._currentTool.pointerUp(e)		
+    }
+
+    setTool(t)
+    {
+	if (this._currentTool != null) {
+	    this._currentTool.dismiss()
+	}
+
+	this._currentTool = t
+	this._currentTool.engage()
+    }
 }
 
 

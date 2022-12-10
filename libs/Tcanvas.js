@@ -26,6 +26,20 @@ class Tcanvas extends Tdiv
 
 	this.fContext.scale(scale, scale)
     }
+
+    canvasCoordsToWindow(pt)
+    //
+    // Description:
+    //		Takes the pt and converts it to window coordinates.
+    //
+    {
+	let pos = this.getPosition()
+
+	pos.x = pos.x + pt.x
+	pos.y = pos.y + pt.y
+
+	return pos
+    }
 }
 
 

@@ -15,6 +15,11 @@ class Tsprite
 	this._drawHeight = 0
 
     }
+
+    image()
+    {
+	return this._img
+    }
     
     draw(ctx)
     {

@@ -20,7 +20,7 @@ class TmarginateModel {
 
 	this.fPauseAnim      = true
 	
-	this.fFrameDimensions = {width:700,height:700}
+	this.fFrameDimensions = {width:1024,height:520}
 
 	this.fFrameImages = []
 
@@ -148,7 +148,7 @@ class TmarginateModel {
 	return this.fTotalNumFrames
     }
 
-    addObject(objDict)
+    addObject(objDict, updateSelectionList=true)
     {
 	let center       = {x:0,y:0}
 	let width        = 10
@@ -187,9 +187,28 @@ class TmarginateModel {
 	if ('sprite' in objDict) {
 	    newBox._sprite.initBitmap(objDict.sprite, 1.0)
 	}
+
+	if (updateSelectionList == true) {
+	    fModel.fSelectionList.replace([newBox])
+	}
 	
-	fModel.fSelectionList.replace([newBox])
-	
+	return newBox
+    }
+
+    addObjects(objDictList)
+    {
+	let newObjects = []
+	for (const objDict of objDictList) {
+	    let newOne = this.addObject(objDict, false)
+	    newObjects.push(newOne)
+	}
+	fModel.fSelectionList.replace(newObjects)	
+    }
+    
+    removeObject(obj)
+    {
+	fModel.fSelectionList.remove(obj)	
+	fModel.fPlanckWorld.removeObject(obj)
     }
 }
 

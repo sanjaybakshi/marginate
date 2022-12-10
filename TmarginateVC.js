@@ -16,7 +16,7 @@ class TmarginateVC
 	
 	this.fCanvas          = new TmarginateCanvas(this.gCanvasId, this)
 	this.fPropertiesPanel = new TmarginatePropertiesPanel(this.gPropertiesPanelId, this)	
-	this.fToolbar         = new TmarginateToolbar(this.gToolbarId)
+	this.fToolbar         = new TmarginateToolbar(this.gToolbarId, this.fCanvas)
 	this.fPlaybackSlider  = new TmarginatePlaybackSlider(this.gPlaybackSliderId)
 
 	this.fCanvas.setWidthHeight(fModel.fFrameDimensions)

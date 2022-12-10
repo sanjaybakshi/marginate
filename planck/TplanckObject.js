@@ -306,6 +306,11 @@ class TplanckObject
     
 	return false    
     }
+
+    sprite()
+    {
+	return this._sprite
+    }
 }
 
 export default TplanckObject
