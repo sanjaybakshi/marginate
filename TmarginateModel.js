@@ -25,11 +25,12 @@ class TmarginateModel {
 	this.fFrameImages = []
 
 	this.fCurrentFrame   = 0
-	this.setFrameRange(120)
+	this.setFrameRange(50)
 
 	this.fPlanckWorld = new TplanckWorld(this.fFrameDimensions.width, this.fFrameDimensions.height, 10)
 
 	this.fSelectionList = new TselectionList()
+
     }
 
     setPlayMode()
@@ -183,6 +184,7 @@ class TmarginateModel {
 	
 	let newBox = fModel.fPlanckWorld.addObject(center, width, height,
 						   fModel.getCurrentFrame(),
+						   fModel.getCurrentFrame(),
 						   objType)
 	if ('sprite' in objDict) {
 	    newBox._sprite.initBitmap(objDict.sprite, 1.0)
@@ -209,6 +211,40 @@ class TmarginateModel {
     {
 	fModel.fSelectionList.remove(obj)	
 	fModel.fPlanckWorld.removeObject(obj)
+    }
+
+    addJoint(jointDict, updateSelectionList=true)
+    {
+	let obj1 = null
+	let obj1Pos = {x:0,y:0}
+	let obj2 = null
+	let obj2Pos = {x:0,y:0}
+
+	if ('obj1' in jointDict) {
+	    obj1 = jointDict.obj1
+	}
+
+	if ('obj1Pos' in jointDict) {
+	    obj1Pos = jointDict.obj1Pos
+	}
+
+	if ('obj2' in jointDict) {
+	    obj2 = jointDict.obj2
+	}
+
+	if ('obj2Pos' in jointDict) {
+	    obj2Pos = jointDict.obj2Pos
+	}
+	
+	let newJoint = fModel.fPlanckWorld.addJoint(obj1, obj1Pos, obj2, obj2Pos,
+						    fModel.getCurrentFrame(),
+						    fModel.getCurrentFrame())
+	
+	if (updateSelectionList == true) {
+	    fModel.fSelectionList.replace([newJoint])
+	}
+	
+	return newJoint
     }
 }
 

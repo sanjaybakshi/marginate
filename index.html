@@ -11,7 +11,8 @@
   <link rel="stylesheet" href="styles/paintStrokePropertiesWnd.css">
   <link rel="stylesheet" href="styles/paintCanvas.css">
   <link rel="stylesheet" href="styles/paintTimeslider.css">
-  <link rel="stylesheet" href="styles/scissorToolExtra.css">    
+  <link rel="stylesheet" href="styles/scissorToolExtra.css">
+  <link rel="stylesheet" href="styles/jointToolExtra.css">      
   
 </head>
 
@@ -32,11 +33,13 @@
       <input class="paint-toolbar-item-image" type="image" src="./icons/Select.png"     id="selectId">
       <input class="paint-toolbar-item-image" type="image" src="./icons/Xform.png"      id="xformId">
 
-      <input class="paint-toolbar-item-image" type="image" src="./icons/Split.png"     id="scissorsId">      
+      <input class="paint-toolbar-item-image" type="image" src="./icons/Split.png"      id="scissorsId">      
+      <input class="paint-toolbar-item-image" type="image" src="./icons/Link.png"       id="jointId">
 
       
       <input class="paint-toolbar-item-image" type="image" src="./icons/Rectangle.png"  id="paintRectangleId">
       <input class="paint-toolbar-item-image" type="image" src="./icons/Circle.png"     id="paintCircleId">
+
     </div>
     
     <div class="paint-menu-container"                              id="paintMenuId">
@@ -133,6 +136,11 @@
   <!--- small button that is used by the scissors tool. --->
   <div class="scissors-container"    id="scissors.GoDivId">  
     <button class="scissors-btn" id="scissors.GoBtnId">Go </button>
+  </div>
+
+  <!--- small button that is used by the joint tool. --->
+  <div class="joint-container"    id="joint.GoDivId">  
+    <button class="joint-btn" id="joint.GoBtnId">Go </button>
   </div>
   
 

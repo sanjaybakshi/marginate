@@ -144,7 +144,6 @@ class TscissorsTool extends Ttool
 		ctx.lineWidth = 2
 		ctx.strokeStyle = 'purple'
 	    
-		ctx.beginPath()
 		ctx.moveTo(this._objRect._x1, this._objRect.center().y + this._yOffset)
 		ctx.lineTo(this._objRect._x2, this._objRect.center().y + this._yOffset)
 		ctx.stroke()
@@ -155,7 +154,6 @@ class TscissorsTool extends Ttool
 		ctx.lineWidth = 1
 		ctx.strokeStyle = 'purple'
 		
-		ctx.beginPath()
 		ctx.moveTo(this._objRect.center().x + this._xOffset, this._objRect._y1)
 		ctx.lineTo(this._objRect.center().x + this._xOffset, this._objRect._y2)
 		ctx.stroke()

@@ -62,7 +62,6 @@ class TdrawUtils
 
     static isInsideCircle(p, center, radius)
     {
-	console.log(p,center,radius)
 	let d = Math.sqrt( (center.x - p.x)*(center.x - p.x) + (center.y - p.y)*(center.y - p.y) )
 	if (d < radius) {
 	    return true

@@ -1,4 +1,6 @@
 import TplanckObject from "./TplanckObject.js"
+import TplanckJoint  from "./TplanckJoint.js"
+
 import Tmath         from "../libs/Tmath.js";
 
 // ALERT: Need to update these when the canvas size changes.
@@ -38,6 +40,7 @@ class TplanckWorld
 	    fWorldWidth  = fWorldHeight * (fCanvasWidth/fCanvasHeight)
 	}
     }
+
 
     step()
     {
@@ -154,6 +157,20 @@ class TplanckWorld
 	//
 	this._fObjectList = this._fObjectList.filter(obj => obj != b);	
 	
+    }
+
+    addJoint(obj1, obj1Pos, obj2, obj2Pos, existanceStart, currentFrame)
+    {
+	let joint = new TplanckJoint(obj1, obj1Pos, obj2, obj2Pos, existanceStart)
+	this._fJointList.push(joint)
+
+	console.log(existanceStart,currentFrame)
+	
+	if (existanceStart == currentFrame) {
+	    joint.addToSimulation(this._fWorld)
+	}
+
+	return joint	
     }
     
     intersectRect(rectPixelSpace)

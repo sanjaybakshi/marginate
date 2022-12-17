@@ -111,16 +111,19 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 
 	    for (const sObj of sList) {
 
-		if (sObj.isActive() != true) {
-		    allActive = false
-		}
+		console.log(sObj.constructor.name)
+		if (sObj.constructor.name == "TplanckObject") {
+		    if (sObj.isActive() != true) {
+			allActive = false
+		    }
 		
-		if (sObj.isDynamic() != true) {
-		    allDynamic = false
-		}
+		    if (sObj.isDynamic() != true) {
+			allDynamic = false
+		    }
 
-		if (sObj.isActivatedOnCollision() != true) {
-		    allActivateOnCollision = false
+		    if (sObj.isActivatedOnCollision() != true) {
+			allActivateOnCollision = false
+		    }
 		}
 	    }
 

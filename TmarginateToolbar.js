@@ -11,6 +11,7 @@ import TxformTool           from "./tools/TxformTool.js"
 import TaddObjectTool       from "./tools/TaddObjectTool.js"
 
 import TscissorsTool        from "./tools/TscissorsTool.js"
+import TjointTool           from "./tools/TjointTool.js"
 
 class TmarginateToolbar extends Ttoolbar
 {
@@ -27,7 +28,8 @@ class TmarginateToolbar extends Ttoolbar
 	this.gSelectId                = "selectId"
 	this.gXformId                 = "xformId"			
 	this.gScissorsId              = "scissorsId"
-	
+	this.gJointId                 = "jointId"
+
 	this.gPaintRectangleId        = "paintRectangleId"	
 	this.gPaintCircleId           = "paintCircleId"
 
@@ -52,6 +54,9 @@ class TmarginateToolbar extends Ttoolbar
 	this._scissorsCtrl  = document.getElementById(this.gScissorsId)
 	this.respondToClick(this._scissorsCtrl)
 
+	this._jointCtrl  = document.getElementById(this.gJointId)
+	this.respondToClick(this._jointCtrl)
+
 	this._paintRectangleCtrl  = document.getElementById(this.gPaintRectangleId)
 	this.respondToClick(this._paintRectangleCtrl)
 
@@ -71,6 +76,10 @@ class TmarginateToolbar extends Ttoolbar
 	this.fSelectTool    = new TselectTool(this.fCanvas)
 	this.fXformTool     = new TxformTool(this.fCanvas)
 	this.fScissorsTool  = new TscissorsTool(this.fCanvas)
+	this.fJointTool     = new TjointTool(this.fCanvas)
+
+	
+
 	this.fAddObjectTool = new TaddObjectTool(this.fCanvas)		
 
 	this.setTool(this.fPaintTool)
@@ -88,109 +97,84 @@ class TmarginateToolbar extends Ttoolbar
 
     activateToolStyle(toolButtonCtrl)
     {
-	const toolButtonPressColor      = TcssUtils.getCssVariableValue('--toolbutton-press-color')
-	const toolButtonBorderRad       = TcssUtils.getCssVariableValue('--toolButton-press-border-radius')
+		const toolButtonPressColor      = TcssUtils.getCssVariableValue('--toolbutton-press-color')
+		const toolButtonBorderRad       = TcssUtils.getCssVariableValue('--toolButton-press-border-radius')
 
-	toolButtonCtrl.style.backgroundColor = toolButtonPressColor
-	toolButtonCtrl.style.borderRadius    = toolButtonBorderRad
+		toolButtonCtrl.style.backgroundColor = toolButtonPressColor
+		toolButtonCtrl.style.borderRadius    = toolButtonBorderRad
     }
 
     deactivateToolStyle(toolButtonCtrl)
     {
-	const toolButtonBackgroundColor = TcssUtils.getCssVariableValue('--toolbar-background-color')
+		const toolButtonBackgroundColor = TcssUtils.getCssVariableValue('--toolbar-background-color')
 
-	toolButtonCtrl.style.backgroundColor = toolButtonBackgroundColor
+		toolButtonCtrl.style.backgroundColor = toolButtonBackgroundColor
     }
-
+    
+    deactivateAllToolStyles()
+    {
+	this.deactivateToolStyle(this._paintBrushCtrl)	    
+	this.deactivateToolStyle(this._paintEraserCtrl)
+	this.deactivateToolStyle(this._selectCtrl)
+	this.deactivateToolStyle(this._xformCtrl)
+	this.deactivateToolStyle(this._scissorsCtrl)
+	this.deactivateToolStyle(this._jointCtrl)
+	this.deactivateToolStyle(this._paintRectangleCtrl)
+	this.deactivateToolStyle(this._paintCircleCtrl)	    
+    }
     
     toolChange(e)
     {
 
 	if (e.target.id == this.gPaintBrushId) {
+	    this.deactivateAllToolStyles()
 	    this.activateToolStyle(this._paintBrushCtrl)
-	    
-	    this.deactivateToolStyle(this._paintEraserCtrl)
-	    this.deactivateToolStyle(this._selectCtrl)
-	    this.deactivateToolStyle(this._xformCtrl)
-	    this.deactivateToolStyle(this._scissorsCtrl)
-	    this.deactivateToolStyle(this._paintRectangleCtrl)
-	    this.deactivateToolStyle(this._paintCircleCtrl)	    
 
 	    this.fPaintTool.setPaintMode()	    
 	    this.setTool(this.fPaintTool)
 	    
 	} else if (e.target.id == this.gPaintEraserId) {
+	    this.deactivateAllToolStyles()
 	    this.activateToolStyle(this._paintEraserCtrl)
-	    
-	    this.deactivateToolStyle(this._paintBrushCtrl)
-	    this.deactivateToolStyle(this._selectCtrl)
-	    this.deactivateToolStyle(this._xformCtrl)	    	    	    
-	    this.deactivateToolStyle(this._scissorsCtrl)
-	    this.deactivateToolStyle(this._paintRectangleCtrl)
-	    this.deactivateToolStyle(this._paintCircleCtrl)	    
 
 	    this.fPaintTool.setEraserMode()
 	    this.setTool(this.fPaintTool)
 	    
 	} else if (e.target.id == this.gSelectId) {
+	    this.deactivateAllToolStyles()
 	    this.activateToolStyle(this._selectCtrl)
-	    
-	    this.deactivateToolStyle(this._paintRectangleCtrl)	   
-	    this.deactivateToolStyle(this._paintBrushCtrl)
-	    this.deactivateToolStyle(this._paintEraserCtrl)
-	    this.deactivateToolStyle(this._xformCtrl)	    	    	    
-	    this.deactivateToolStyle(this._scissorsCtrl)
-	    this.deactivateToolStyle(this._paintCircleCtrl)	    
 
 	    this.setTool(this.fSelectTool)
 
 	} else if (e.target.id == this.gXformId) {
+	    this.deactivateAllToolStyles()
 	    this.activateToolStyle(this._xformCtrl)
-	    
-	    this.deactivateToolStyle(this._paintRectangleCtrl)	   
-	    this.deactivateToolStyle(this._paintBrushCtrl)
-	    this.deactivateToolStyle(this._paintEraserCtrl)
-	    this.deactivateToolStyle(this._selectCtrl)	    	    	    
-	    this.deactivateToolStyle(this._paintCircleCtrl)	    
-	    this.deactivateToolStyle(this._scissorsCtrl)
 
 	    this.setTool(this.fXformTool)
 
 	} else if (e.target.id == this.gScissorsId) {
-
+	    this.deactivateAllToolStyles()
 	    this.activateToolStyle(this._scissorsCtrl)	    
-	    this.deactivateToolStyle(this._paintRectangleCtrl)	   
-	    this.deactivateToolStyle(this._paintBrushCtrl)
-	    this.deactivateToolStyle(this._paintEraserCtrl)
-	    this.deactivateToolStyle(this._selectCtrl)	    	    	    
-	    this.deactivateToolStyle(this._paintCircleCtrl)	    
-	    this.deactivateToolStyle(this._xformCtrl)
 
 	    this.setTool(this.fScissorsTool)
+
+	} else if (e.target.id == this.gJointId) {
+	    this.deactivateAllToolStyles()
+	    this.activateToolStyle(this._jointCtrl)	    
+
+	    this.setTool(this.fJointTool)
 	    
 	} else if (e.target.id == this.gPaintRectangleId) {
+	    this.deactivateAllToolStyles()
 	    this.activateToolStyle(this._paintRectangleCtrl)
-	    
-	    this.deactivateToolStyle(this._paintBrushCtrl)
-	    this.deactivateToolStyle(this._selectCtrl)
-	    this.deactivateToolStyle(this._xformCtrl)	    	    	    
-	    this.deactivateToolStyle(this._paintEraserCtrl)
-	    this.deactivateToolStyle(this._paintCircleCtrl)	    
-	    this.deactivateToolStyle(this._scissorsCtrl)
 
 	    this.fAddObjectTool.setRectangleMode()
 	    this.setTool(this.fAddObjectTool)
 	    
 	} else if (e.target.id == this.gPaintCircleId) {
+	    this.deactivateAllToolStyles()
 	    this.activateToolStyle(this._paintCircleCtrl)
 	    
-	    this.deactivateToolStyle(this._paintBrushCtrl)
-	    this.deactivateToolStyle(this._paintEraserCtrl)
-	    this.deactivateToolStyle(this._selectCtrl)
-	    this.deactivateToolStyle(this._xformCtrl)	    	    	    
-	    this.deactivateToolStyle(this._paintRectangleCtrl)
-	    this.deactivateToolStyle(this._scissorsCtrl)
-
 	    this.fAddObjectTool.setCircleMode()	    	    
 	    this.setTool(this.fAddObjectTool)
 	}

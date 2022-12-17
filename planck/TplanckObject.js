@@ -12,6 +12,7 @@ class TplanckObject
     _isDynamic;
     _activateOnCollision;
 
+    _body_b2d    
     _sprite;
 
     static eObjectType = {

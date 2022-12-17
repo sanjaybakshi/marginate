@@ -29,6 +29,31 @@ class Trect
 
 	return newRect	
     }
+
+    static constructFromPoints(pts)
+    {
+	let minX = Number.MAX_VALUE
+	let maxX = Number.MIN_VALUE
+	let minY = Number.MAX_VALUE
+	let maxY = Number.MIN_VALUE
+
+	for (const p of pts) {
+	    if (p.x < minX) {
+		minX = p.x
+	    }
+	    if (p.x > maxX) {
+		maxX = p.x
+	    }
+	    if (p.y < minY) {
+		minY = p.y
+	    }
+	    if (p.y > maxY) {
+		maxY = p.y
+	    }
+	}
+
+	return Trect.constructFromCoords({x1:minX,y1:minY,x2:maxX,y2:maxY})
+    }
     
     width()
     {
