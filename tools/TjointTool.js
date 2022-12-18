@@ -32,14 +32,19 @@ class TjointTool extends Ttool
 	this._circleManipSize     = 5
 	this._circleManipColor    = 'blue'
 	this._selCircleManipColor = 'red'
-	
-	this._p1 = {x:40,y:40}
-	this._p2 = {x:60,y:60}
 
-	this._moveP1_started   = false
-	this._moveP2_started   = false
-	this._intersectedObjP1 = null
-	this._intersectedObjP2 = null
+
+	this._obj1                   = null
+	this._objPt1                 = {x:100,y:90}
+	this._anchorPt1              = {x:100,y:130}
+	this._move_objPt1_started    = false
+	this._move_anchorPt1_started = false	
+
+	this._obj2                   = null
+	this._objPt2                 = {x:200,y:90}
+	this._anchorPt2              = {x:200,y:130}
+	this._move_objPt2_started    = false
+	this._move_anchorPt2_started = false	
     }
 
     
@@ -53,24 +58,43 @@ class TjointTool extends Ttool
 	let y = pointerInfo.y
 
 	this.fJointGoDiv.hide()
-	
+
 	if (TdrawUtils.isInsideCircle({x:x, y:y},
-				      this._p1,
+				      this._objPt1,
 				      this._circleManipSize)) {
-	    this._moveP1_started = true
-	    this._moveP2_started = false
-
+	    this._move_objPt1_started    = true
+	    this._move_objPt2_started    = false
+	    this._move_anchorPt1_started = false
+	    this._move_anchorPt2_started = false	    	    
 	} else if (TdrawUtils.isInsideCircle({x:x, y:y},
-					     this._p2,
+					     this._objPt2,
 					     this._circleManipSize)) {
-	    this._moveP1_started = false
-	    this._moveP2_started = true
+	    this._move_objPt1_started    = false
+	    this._move_objPt2_started    = true
+	    this._move_anchorPt1_started = false
+	    this._move_anchorPt2_started = false	    	    
+	} else if (TdrawUtils.isInsideCircle({x:x, y:y},
+					     this._anchorPt1,
+					     this._circleManipSize)) {
+	    this._move_objPt1_started    = false
+	    this._move_objPt2_started    = false
+	    this._move_anchorPt1_started = true
+	    this._move_anchorPt2_started = false
+	}  else if (TdrawUtils.isInsideCircle({x:x, y:y},
+					     this._anchorPt2,
+					     this._circleManipSize)) {
+	    this._move_objPt1_started    = false
+	    this._move_objPt2_started    = false
+	    this._move_anchorPt1_started = false
+	    this._move_anchorPt2_started = true
 	} else {
-	    this._moveP1_started = false
-	    this._moveP2_started = false
+	    this._move_objPt1_started    = false
+	    this._move_objPt2_started    = false
+	    this._move_anchorPt1_started = false
+	    this._move_anchorPt2_started = false
 
-	    this._intersectedObjP1 = null	    
-	    this._intersectedObjP2 = null	    
+	    this._obj1                   = null
+	    this._obj2                   = null
 	}
     }
 
@@ -82,10 +106,14 @@ class TjointTool extends Ttool
 	let x = pointerInfo.x
 	let y = pointerInfo.y
 	
-	if (this._moveP1_started) {
-	    this._p1 = {x:x,y:y}	    
-	} else if (this._moveP2_started) {
-	    this._p2 = {x:x,y:y}
+	if (this._move_objPt1_started) {
+	    this._objPt1 = {x:x,y:y}	    
+	} else if (this._move_objPt2_started) {
+	    this._objPt2 = {x:x,y:y}
+	} else if (this._move_anchorPt1_started) {
+	    this._anchorPt1 = {x:x,y:y}
+	} else if (this._move_anchorPt2_started) {
+	    this._anchorPt2 = {x:x,y:y}
 	}
     }
 
@@ -93,8 +121,10 @@ class TjointTool extends Ttool
     {
 	super.pointerUp(e)
 
-	this._moveP1_started = false
-	this._moveP2_started = false
+	this._move_objPt1_started    = false
+	this._move_objPt2_started    = false
+	this._move_anchorPt1_started = false
+	this._move_anchorPt2_started = false
 
 	if (this.canDrawGoButton()) {
 	    this.drawGoButton()
@@ -109,20 +139,36 @@ class TjointTool extends Ttool
 
 	let p1_Color = this._circleManipColor
 	let p2_Color = this._circleManipColor
-	
-	if (this._moveP1_started) {
-	    p1_Color = this._selCircleManipColor
-	} else if (this._moveP2_started) {
-	    p2_Color = this._selCircleManipColor
-	}
 
 	ctx.save()
-	
-	TdrawUtils.drawCircle(ctx, this._p1,
+
+	// Draw the ui for building a joint.
+	//
+	TdrawUtils.drawCircle(ctx, this._objPt1,
 			      this._circleManipSize,
 			      p1_Color,
 			      "black", 1)
-	TdrawUtils.drawCircle(ctx, this._p2,
+
+	TdrawUtils.drawCircle(ctx, this._anchorPt1,
+			      this._circleManipSize,
+			      p1_Color,
+			      "black", 1)
+
+	ctx.beginPath()
+	ctx.lineWidth = 2
+	ctx.strokeStyle = 'purple'
+	    
+	ctx.moveTo(this._objPt1.x, this._objPt1.y)
+	ctx.lineTo(this._anchorPt1.x, this._anchorPt1.y)
+	ctx.stroke()
+
+	
+	TdrawUtils.drawCircle(ctx, this._objPt2,
+			      this._circleManipSize,
+			      p2_Color,
+			      "black", 1)
+
+	TdrawUtils.drawCircle(ctx, this._anchorPt2,
 			      this._circleManipSize,
 			      p2_Color,
 			      "black", 1)
@@ -131,8 +177,18 @@ class TjointTool extends Ttool
 	ctx.lineWidth = 2
 	ctx.strokeStyle = 'purple'
 	    
-	ctx.moveTo(this._p1.x, this._p1.y)
-	ctx.lineTo(this._p2.x, this._p2.y)
+	ctx.moveTo(this._objPt2.x, this._objPt2.y)
+	ctx.lineTo(this._anchorPt2.x, this._anchorPt2.y)
+	ctx.stroke()
+
+
+	ctx.beginPath()
+	ctx.lineWidth = 2
+	ctx.setLineDash([5,5])
+	ctx.strokeStyle = 'purple'
+	    
+	ctx.moveTo(this._anchorPt1.x, this._anchorPt1.y)
+	ctx.lineTo(this._anchorPt2.x, this._anchorPt2.y)
 	ctx.stroke()
 	
 	ctx.restore()
@@ -148,13 +204,18 @@ class TjointTool extends Ttool
     {
 	super.engage()
 
-	this._moveP1_started   = false
-	this._moveP2_started   = false
-	this._intersectedObjP1 = null
-	this._intersectedObjP2 = null
+	
+	this._obj1                   = null
+	//this._objPt1                 = {x:100,y:90}
+	//this._anchorPt1              = {x:100,y:130}
+	this._move_objPt1_started    = false
+	this._move_anchorPt1_started = false	
 
-	this._p1 = {x:40,y:40}
-	this._p2 = {x:60,y:60}
+	this._obj2                   = null
+	//this._objPt2                 = {x:200,y:90}
+	//this._anchorPt2              = {x:200,y:130}
+	this._move_objPt2_started    = false
+	this._move_anchorPt2_started = false	
 
 	if (this.canDrawGoButton()) {
 	    this.drawGoButton()
@@ -165,22 +226,22 @@ class TjointTool extends Ttool
 
     canDrawGoButton()
     {
-	this._intersectedObjP1 = null
-	this._intersectedObjP2 = null
+	this._obj1 = null
+	this._obj2 = null
 	
-	let r = {left: this._p1.x, top: this._p1.y, width: 1, height: 1}	
+	let r = {left: this._objPt1.x, top: this._objPt1.y, width: 1, height: 1}	
 	let objs = fModel.fPlanckWorld.intersectRect(r)
 	if (objs.length > 0) {
-	    this._intersectedObjP1 = objs[0]
+	    this._obj1 = objs[0]
 	}
 
-	r = {left: this._p2.x, top: this._p2.y, width: 1, height: 1}
+	r = {left: this._objPt2.x, top: this._objPt2.y, width: 1, height: 1}
 	objs = fModel.fPlanckWorld.intersectRect(r)
 	if (objs.length > 0) {
-	    this._intersectedObjP2 = objs[0]
+	    this._obj2 = objs[0]
 	}
 
-	if (this._intersectedObjP1 != null && this._intersectedObjP2 != null) {
+	if (this._obj1 != null && this._obj2 != null) {
 	    return true
 	}
 
@@ -192,7 +253,7 @@ class TjointTool extends Ttool
 	// make a rect from the 2 points and position the go button
 	// in the lower right.
 	//
-	let boundRect = Trect.constructFromPoints([this._p1,this._p2])
+	let boundRect = Trect.constructFromPoints([this._anchorPt1, this._anchorPt2])
 	let pos_wnd = this.fCanvas.canvasCoordsToWindow( {x: boundRect._x2,
 							  y: boundRect._y2 + 20} )
 	
@@ -202,17 +263,15 @@ class TjointTool extends Ttool
     
     makeJoint()
     {
-	console.log("makeJoint")
-
 	let newJointInfo = {}
 	//
 	//
 
-	newJointInfo.obj1    = this._intersectedObjP1
-	newJointInfo.obj1Pos = this._p1
+	newJointInfo.obj1    = this._obj1
+	newJointInfo.obj1Pos = this._anchorPt1
 
-	newJointInfo.obj2    = this._intersectedObjP2
-	newJointInfo.obj2Pos = this._p2
+	newJointInfo.obj2    = this._obj2
+	newJointInfo.obj2Pos = this._anchorPt2
 
 	fModel.addJoint(newJointInfo)
 	

@@ -18,7 +18,7 @@ class TplanckJoint
 	this._obj2    = o2
 	this._obj1Pos = o1Pos
 	this._obj2Pos = o2Pos
-	
+
 	this._existanceStart = existanceStart
     }
     
@@ -35,8 +35,9 @@ class TplanckJoint
     
     addToSimulation(world)
     {
-	let j = this.makeDistanceJoint(world)
-	//let j = this.makeMotorJoint(world)
+	//let j = this.makeDistanceJoint(world)
+	let j = this.makeMotorJoint(world)
+	//let j = this.makeRevoluteJoint(world)
 	this._joint_b2d = j
 	
     }
@@ -48,13 +49,13 @@ class TplanckJoint
 	
 	worldAnchorOnA = TplanckWorld.pixels2world_vec(worldAnchorOnA)
 	worldAnchorOnB = TplanckWorld.pixels2world_vec(worldAnchorOnB)
-	
-//	let j = world.createJoint(planck.DistanceJoint({
-//	    collideConnected: false,
-//	}, this._obj1._body_b2d, this._obj2._body_b2d, worldAnchorOnA, worldAnchorOnB))
-	let j = world.createJoint(planck.RevoluteJoint({
+
+	let j = world.createJoint(planck.DistanceJoint({
 	    collideConnected: false,
 	}, this._obj1._body_b2d, this._obj2._body_b2d, worldAnchorOnA, worldAnchorOnB))
+//	let j = world.createJoint(planck.RevoluteJoint({
+//	    collideConnected: false,
+//	}, this._obj1._body_b2d, this._obj2._body_b2d, worldAnchorOnA, worldAnchorOnB))
 
 	// Compute distance between the anchor points.
 	//
@@ -66,18 +67,42 @@ class TplanckJoint
 	
 	return j
     }
+
+    makeRevoluteJoint(world)
+    {	
+	var worldAnchorOnA = planck.Vec2(this._obj1Pos.x, this._obj1Pos.y)
+	worldAnchorOnA = TplanckWorld.pixels2world_vec(worldAnchorOnA)
+
+	let j = world.createJoint(planck.RevoluteJoint( {},
+							this._obj1._body_b2d,
+							this._obj2._body_b2d,
+							worldAnchorOnA))
+
+	j.m_collideConnected = false	
+	j.m_dampingRatio = 0.1
+	j.m_frequencyHz = 3.0
+
+	
+	return j
+    }
     
     makeMotorJoint(world)
     {
 	var worldAnchorOnB = planck.Vec2(this._obj2Pos.x, this._obj2Pos.y)
+	worldAnchorOnB = TplanckWorld.pixels2world_vec(worldAnchorOnB)
 
-	let j = world.createJoint(planck.WheelJoint({
-	    motorSpeed:     50.0,
-	    maxMotorTorque: 20.0,
-	    enableMotor:    true,
-	    frequencyHz:    3.0,
-	    dampingRatio:   0.7
-	}, this._obj1._body_b2d, this._obj2._body_b2d, worldAnchorOnB, planck.Vec2(0.0,1.0)))
+	let j = world.createJoint(planck.WheelJoint( {},
+						     this._obj1._body_b2d,
+						     this._obj2._body_b2d,
+						     worldAnchorOnB,
+						     planck.Vec2(0.0,1.0) ))
+	
+	j.m_collideConnected = false
+	j.m_motorSpeed       = 50.0
+	j.m_maxMotorTorque   = 10.0
+	j.m_enableMotor      = true
+	j.m_frequencyHz      = 3.0
+	j.m_dampingRatio     = 0.7
 
 	return j
     }
@@ -85,11 +110,11 @@ class TplanckJoint
     
     draw(ctx, paused, annotated=false)
     {
-	var a1 = TplanckWorld.world2pixels_vec(this._joint_b2d.getBodyA().getPosition())
-	var a2 = TplanckWorld.world2pixels_vec(this._joint_b2d.getBodyB().getPosition())
+	var p1 = TplanckWorld.world2pixels_vec(this._joint_b2d.getBodyA().getPosition())
+	var p2 = TplanckWorld.world2pixels_vec(this._joint_b2d.getBodyB().getPosition())
 
-	a1 = TplanckWorld.world2pixels_vec(this._joint_b2d.getAnchorA())
-	a2 = TplanckWorld.world2pixels_vec(this._joint_b2d.getAnchorB())	    
+	var a1 = TplanckWorld.world2pixels_vec(this._joint_b2d.getAnchorA())
+	var a2 = TplanckWorld.world2pixels_vec(this._joint_b2d.getAnchorB())	    
 
 	ctx.save()
 	
@@ -98,8 +123,12 @@ class TplanckJoint
 	ctx.strokeStyle = 'grey';	    
 	
 	ctx.beginPath();
-	ctx.moveTo(a1.x, a1.y)
-	    ctx.lineTo(a2.x, a2.y)
+	ctx.moveTo(p1.x, p1.y)
+	ctx.lineTo(a1.x, a2.y)
+
+	ctx.lineTo(a2.x, a2.y)
+	ctx.lineTo(p2.x, p2.y)
+	
 	ctx.stroke();
 
 	ctx.restore()	

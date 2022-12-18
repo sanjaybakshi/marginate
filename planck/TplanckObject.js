@@ -37,7 +37,7 @@ class TplanckObject
 	this._isActive  = isActive
 	
 	this._activateOnCollision = true
-	
+
 	this._objType = objType
 
 	this._sprite = new Tsprite()
@@ -104,7 +104,6 @@ class TplanckObject
     //
     {
 	this._activateOnCollision = activatedState
-	console.log(this._activateOnCollision)
     }
     
     isActivatedOnCollision()
@@ -142,8 +141,17 @@ class TplanckObject
 
 	let v_world  = TplanckWorld.pixels2world_vec(this._v_pixels) 
 	body.setPosition(v_world)
+
+	let shape = null
+
+	if (this._objType === TplanckObject.eObjectType.kRectangle) {
+	    shape = planck.Box(this._widthWorld/2, this._heightWorld/2);
+	} else 	if (this._objType === TplanckObject.eObjectType.kCircle) {
+	    // assumed that width/height are equal.
+	    //
+	    shape = planck.Circle(this._widthWorld/2);
+	}
 	
-	let shape = planck.Box(this._widthWorld/2, this._heightWorld/2);
 	body.createFixture(shape, 1.0);
 
 	// time to set mass information
@@ -202,15 +210,24 @@ class TplanckObject
 	}
 
 	if (!paused) {
-	    this.drawRect(ctx, pos_pixels, rot);
+	    if (this._objType === TplanckObject.eObjectType.kRectangle) {	    
+		this.drawRect(ctx, pos_pixels, rot);
+	    } else if (this._objType === TplanckObject.eObjectType.kCircle) {
+		this.drawCircle(ctx, pos_pixels, rot);
+	    }
 	} else {
-	    this.drawRect(ctx, pos_pixels, rot);
+	    if (this._objType === TplanckObject.eObjectType.kRectangle) {	    
+		this.drawRect(ctx, pos_pixels, rot);
+	    } else if (this._objType === TplanckObject.eObjectType.kCircle) {
+		this.drawCircle(ctx, pos_pixels, rot);
+	    }
 	}
 
 	ctx.restore()
 	
     }
 
+    
 
     drawRect(ctx, p_pixels, angle)
     {
@@ -236,6 +253,18 @@ class TplanckObject
 	ctx.stroke();	
     }
 
+    drawCircle(ctx, p_pixels, angle)
+    {	
+	let xformMat = Tmath.xformMatrix(-angle, [p_pixels.x, p_pixels.y])
+
+	let p = [0,0]
+	p = Tmath.xformPoint(p, xformMat)
+
+	ctx.beginPath();
+	ctx.arc(p[0],p[1],this._widthPixels/2,0,2*Math.PI);
+	ctx.stroke();	
+    }
+    
     getCenterInPixels()
     {
 	// Probably should rotate the object and then find the center but
@@ -299,7 +328,6 @@ class TplanckObject
 	    let boxRect = {x1: pos_pixels.x - this._widthPixels/2, y1: pos_pixels.y - this._heightPixels/2,
 			   x2: pos_pixels.x + this._widthPixels/2, y2: pos_pixels.y + this._heightPixels/2}
 
-	    console.log(boxRect)
 	    return Tmath.overlaps({x1: rectPixelSpace.left, y1: rectPixelSpace.top, x2: rectPixelSpace.left+rectPixelSpace.width, y2: rectPixelSpace.top+rectPixelSpace.height},
 				      boxRect)
 

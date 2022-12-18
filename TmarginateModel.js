@@ -25,7 +25,7 @@ class TmarginateModel {
 	this.fFrameImages = []
 
 	this.fCurrentFrame   = 0
-	this.setFrameRange(50)
+	this.setFrameRange(250)
 
 	this.fPlanckWorld = new TplanckWorld(this.fFrameDimensions.width, this.fFrameDimensions.height, 10)
 
@@ -181,7 +181,7 @@ class TmarginateModel {
 	    width  = objDict.sprite.width
 	    height = objDict.sprite.height 
 	}
-	
+
 	let newBox = fModel.fPlanckWorld.addObject(center, width, height,
 						   fModel.getCurrentFrame(),
 						   fModel.getCurrentFrame(),
