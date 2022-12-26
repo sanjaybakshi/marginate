@@ -1,7 +1,7 @@
-import Tmath        from "../libs/Tmath.js";
-//import Tsprite      from "../libs/Tsprite.js";
-import TimageUtils  from "../libs/TimageUtils.js";
 import TplanckWorld from "./TplanckWorld.js";
+
+import Tmath        from "../libs/Tmath.js";
+import TimageUtils  from "../libs/TimageUtils.js";
 
 
 class TplanckObject
@@ -14,7 +14,7 @@ class TplanckObject
     _activateOnCollision;
 
     _body_b2d    
-    _bitmap;
+    _sprite;
 
     static eObjectType = {
 	kRectangle : 0,
@@ -38,32 +38,9 @@ class TplanckObject
 
     sprite()
     {
-	return this._bitmap
+	return this._sprite
     }
-    /*
-    constructor(pos, width, height, existanceStart, objType, id, isDynamic=true, isActive=true)
-    {
-	this._widthWorld   = TplanckWorld.pixels2world_float(width)
-	this._heightWorld  = TplanckWorld.pixels2world_float(height)
-	
-	this._widthPixels  = width
-	this._heightPixels = height
-	this._existanceStart = existanceStart
 
-	this._v_pixels = planck.Vec2(pos.x, pos.y)
-	this._isDynamic = isDynamic
-	this._isActive  = isActive
-	
-	this._activateOnCollision = true
-
-	this._objType = objType
-
-	this._sprite = new Tsprite(width,height)
-
-	this._uid = id
-    }
-    */
-    
     setPosition(newPos)
     {
 	this._v_pixels = planck.Vec2(newPos.x, newPos.y)
@@ -207,15 +184,15 @@ class TplanckObject
 	ctx.save()
 
 
-	if (this._bitmap != null) {
+	if (this._sprite != null) {
 	    ctx.save()
 	    ctx.translate(pos_pixels.x,pos_pixels.y)
 	    ctx.rotate(-rot)
 
-	    ctx.drawImage(this._bitmap,
+	    ctx.drawImage(this._sprite,
 			  0,0,
-			  this._bitmap.width,
-			  this._bitmap.height,
+			  this._sprite.width,
+			  this._sprite.height,
 			  
 			  Math.floor(-this._widthPixels  / 2),
 			  Math.floor(-this._heightPixels / 2),
@@ -227,12 +204,6 @@ class TplanckObject
 	    
 
 	}
-	/*
-	this._sprite._rot = -rot
-	this._sprite._pos = {x:pos_pixels.x, y:pos_pixels.y}
-	this._sprite.draw(ctx)
-	*/
-
 	
 	ctx.beginPath();
 
@@ -379,14 +350,6 @@ class TplanckObject
     
 	return false    
     }
-
-    /*
-    sprite()
-    {
-	return this._sprite
-    }
-    */
-
     
     obj2dict()
     {
@@ -405,13 +368,8 @@ class TplanckObject
 		       objType: ot,
 		       id: id}
 
-	/*
-	if (this._sprite.hasImage()) {
-	    objData.spriteImage = TimageUtils.img2String(this._sprite._img)
-	    }
-	*/
-	if (this._bitmap != null) {
-	    objData.sprite = TimageUtils.img2String(this._bitmap)
+	if (this._sprite != null) {
+	    objData.sprite = TimageUtils.img2String(this._sprite)
 	}
 
 	return objData
@@ -429,7 +387,7 @@ class TplanckObject
 	let isDynamic           = null
 	let activateOnCollision = null
 	let isActive            = null
-	let bitmap              = null
+	let sprite              = null
 
 	if ('pos' in objDict) {
 	    pos = objDict.pos
@@ -466,9 +424,9 @@ class TplanckObject
 	if ('sprite' in objDict) {
 	    console.log(objDict.sprite.constructor.name)
 	    if (objDict.sprite.constructor.name == "String") {
-		bitmap = TimageUtils.string2Img(objDict.sprite)
+		sprite = TimageUtils.string2Img(objDict.sprite)
 	    } else {
-		bitmap = objDict.sprite
+		sprite = objDict.sprite
 	    }
 	}
 
@@ -500,8 +458,8 @@ class TplanckObject
 		isActive = true
 	    }
 
-	    if (bitmap == null) {
-		bitmap = null
+	    if (sprite == null) {
+		sprite = null
 	    }
 	}
 
@@ -539,8 +497,8 @@ class TplanckObject
 	    this._isActive  = isActive
 	}
 
-	if (bitmap != null) {
-	    this._bitmap = bitmap
+	if (sprite != null) {
+	    this._sprite = sprite
 	}
     }
 }
