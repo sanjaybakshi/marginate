@@ -156,55 +156,7 @@ class TmarginateModel {
 	}
 	return newObj
     }
-    /*
-    addObject(objDict, updateSelectionList=true)
-    {
-	let center       = {x:0,y:0}
-	let width        = 10
-	let height       = 10
-	let currentFrame = 1
-	let objType      = TplanckObject.eObjectType.kRectangle
-	
-	if ('center' in objDict) {
-	    center = objDict.center
-	}
 
-	if ('width' in objDict) {
-	    width = objDict.width
-	}
-
-	if ('height' in objDict) {
-	    height = objDict.height
-	}
-
-	if ('currentFrame' in objDict) {
-	    currentFrame = objDict.currentFrame
-	}
-
-	if ('objType' in objDict) {
-	    objType = objDict.objType
-	}
-	
-	if ('sprite' in objDict) {
-	    width  = objDict.sprite.width  / TimageUtils.numPixels2device()
-	    height = objDict.sprite.height / TimageUtils.numPixels2device()
-	}
-
-	let newBox = fModel.fPlanckWorld.addObject(center, width, height,
-						   fModel.getCurrentFrame(),
-						   fModel.getCurrentFrame(),
-						   objType)
-	if ('sprite' in objDict) {
-	    newBox._sprite.initBitmap(objDict.sprite)
-	}
-
-	if (updateSelectionList == true) {
-	    fModel.fSelectionList.replace([newBox])
-	}
-	
-	return newBox
-    }
-*/
     addObjects(objDictList)
     {
 	let newObjects = []
@@ -254,45 +206,7 @@ class TmarginateModel {
 	
 	return newJoint
     }
-/*
-    editObject(obj, objDict)
-    {	
-	let center       = null
-	let width        = null
-	let height       = null
-	let currentFrame = null
-	let objType      = null
-	let bitmap       = null
-	
-	if ('center' in objDict) {
-	    center = objDict.center
-	}
 
-	if ('width' in objDict) {
-	    width = objDict.width
-	}
-
-	if ('height' in objDict) {
-	    height = objDict.height
-	}
-
-	if ('currentFrame' in objDict) {
-	    currentFrame = objDict.currentFrame
-	}
-
-	if ('objType' in objDict) {
-	    objType = objDict.objType
-	}
-	
-	if ('sprite' in objDict) {
-	    bitmap = objDict.sprite
-	}
-
-	if (bitmap != null) {
-	    obj._sprite._img = bitmap
-	}
-    }
-*/
     editObject(obj, objDict)
     {	
 	fModel.fPlanckWorld.editObject(obj, objDict)

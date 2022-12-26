@@ -64,18 +64,6 @@ class TpaintTool extends Ttool
 
 	    let obj = fModel.fSelectionList._sList[0]
 
-	    /*
-	    if (!obj._sprite.hasImage()) {
-		obj._sprite.createBitmap(obj.widthInPixels(), obj.heightInPixels())
-		}
-		
-	    if (obj._bitmap == null {
-		obj._sprite.createBitmap(obj.widthInPixels(), obj.heightInPixels())
-	    }
-
-	    let bitmap = obj._sprite.image()
-	    */
-	    
 	    // transform the stroke points to the coordinates on the image.
 	    //
 	    let bCenter = obj.getCenterInPixels()
@@ -88,12 +76,12 @@ class TpaintTool extends Ttool
 	    s.translate(left, top)
 	    
 
-	    let bitmap = obj.sprite()
-	    if (bitmap == null) {
-		bitmap = TimageUtils.makeImage(obj._widthPixels, obj._heightPixels)		
+	    let sprite = obj.sprite()
+	    if (sprite == null) {
+		sprite = TimageUtils.makeImage(obj._widthPixels, obj._heightPixels)		
 	    }
 	    
-	    let strokedImg = await s.drawOnImage(bitmap, obj._widthPixels, obj._heightPixels)
+	    let strokedImg = await s.drawOnImage(sprite, obj._widthPixels, obj._heightPixels)
 	    fModel.editObject(obj, {sprite: strokedImg})
 
 	    

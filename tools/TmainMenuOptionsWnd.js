@@ -3,7 +3,6 @@ import Tbutton      from "../libs/Tbutton.js"
 
 import TimageUtils  from "../libs/TimageUtils.js"
 import TfileUtils   from "../libs/TfileUtils.js"
-import Tsprite      from "../libs/Tsprite.js"
 
 import { fModel }   from '../TmarginateModel.js'
 
