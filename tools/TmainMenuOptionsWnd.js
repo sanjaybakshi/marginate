@@ -5,6 +5,8 @@ import TimageUtils  from "../libs/TimageUtils.js"
 import TfileUtils   from "../libs/TfileUtils.js"
 import Tsprite      from "../libs/Tsprite.js"
 
+import { fModel }   from '../TmarginateModel.js'
+
 
 class TmainMenuOptionsWnd extends TpopupWindow
 {
@@ -35,28 +37,18 @@ class TmainMenuOptionsWnd extends TpopupWindow
 	let files = await TfileUtils.filePicker()
 
 	if (files.length > 0) {
+	   
+	    let jsonFile = await TfileUtils.readFileAsync(files[0])
 
+	    let modelDict = JSON.parse(jsonFile)
+
+
+	    fModel.dict2Model(modelDict)
 	    
+	    //console.log(worldInfo)
 
-
-	    let base_image = new Image();
-	    base_image.src = URL.createObjectURL(files[0])
-
-	    base_image.onload = () => {
-		//this._paintCanvas.setBackgroundImage(base_image)
-
-		//var ratio = window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.		
-		//this._paintCanvas._paintImage = new Tsprite()
-		//this._paintCanvas._paintImage.initBitmap(base_image, 1/ratio)
-
-		//this._paintCanvas.setWidthHeight({width: 256, height: 256})
-
-
-		//this._paintCanvas.resetUsingImage(base_image)
-		window.dispatchEvent(new Event('resize'));
-
-		
-	    }
+	    //let objDict = worldInfo.objs
+	    //console.log(objDict)
 	}	
     }
 
@@ -64,9 +56,16 @@ class TmainMenuOptionsWnd extends TpopupWindow
     {
 	this.hide()
 
+
+	let modelDict = fModel.model2Dict()
+	
 	//let base64Img = TimageUtils.canvas2base64Image(this._paintCanvas._div)
 	//TfileUtils.saveBase64AsFile(base64Img,"img22.png")
-	
+
+	let world_strings = JSON.stringify(modelDict, undefined, 2)
+	console.log(world_strings)
+
+	TfileUtils.saveFile(world_strings, "test.json", "text/plain")
     }
 }
 

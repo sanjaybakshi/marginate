@@ -16,7 +16,7 @@ class ThtmlUtils
 
 		var blob = item.getAsFile();
 
-		var f = await TfileUtils.readFileAsync(blob)
+		var f = await TfileUtils.readBlobAsync(blob)
 		var i = await TfileUtils.readImageAsync(f)
 		img = i
 

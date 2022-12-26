@@ -111,7 +111,6 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 
 	    for (const sObj of sList) {
 
-		console.log(sObj.constructor.name)
 		if (sObj.constructor.name == "TplanckObject") {
 		    if (sObj.isActive() != true) {
 			allActive = false

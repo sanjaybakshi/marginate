@@ -1,18 +1,19 @@
+import TimageUtils from "./TimageUtils.js";
 
 class Tsprite
 {
     _pos;
     _rot;
     
-    constructor()
+    constructor(w,h)
     {
 	this._pos    = {x:0, y:0}
 	this._rot    = 0.0;
 
 	this._img = null
 	
-	this._drawWidth  = 0
-	this._drawHeight = 0
+	this._drawWidth  = Math.floor(w)
+	this._drawHeight = Math.floor(h)
 
     }
 
@@ -29,8 +30,9 @@ class Tsprite
 	    
 	    ctx.translate(this._pos.x, this._pos.y)
 	    ctx.rotate(this._rot);
-	    ctx.scale(1, 1);
+	    //ctx.scale(1/this.scaleFactor(), 1/this.scaleFactor());
 
+	    /*
 	    ctx.drawImage(this._img,
 			  Math.floor(-this._drawWidth  / 2),
 			  Math.floor(-this._drawHeight / 2),
@@ -38,19 +40,37 @@ class Tsprite
 			  this._drawHeight
 			  
 			 );
-	    
+	    */
+
+	    ctx.drawImage(this._img,
+			  0,0,
+			  this._img.width,
+			  this._img.height,
+			  
+			  Math.floor(-this._drawWidth  / 2),
+			  Math.floor(-this._drawHeight / 2),
+			  this._drawWidth,
+			  this._drawHeight
+			 );
+
 	    ctx.restore()
 	}
     }
 
-    initBitmap(img, scaleFactor)
+    initBitmap(img)
     {
-	this._img    = img
-
-	this._drawWidth  = Math.floor(img.width  * scaleFactor)
-	this._drawHeight = Math.floor(img.height * scaleFactor)
+	this._img = img
     }
 
+    createBitmap(width, height)
+    {
+	
+	let bmap = TimageUtils.makeImage(width,height)
+
+	this.initBitmap(bmap)
+	
+    }
+    
     scaleFactor()
     {
 	return (this._drawWidth / this._img.width)

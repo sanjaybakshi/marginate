@@ -1,5 +1,6 @@
 import Tmath        from "../libs/Tmath.js";
-import Tsprite      from "../libs/Tsprite.js";
+//import Tsprite      from "../libs/Tsprite.js";
+import TimageUtils  from "../libs/TimageUtils.js";
 import TplanckWorld from "./TplanckWorld.js";
 
 
@@ -13,7 +14,7 @@ class TplanckObject
     _activateOnCollision;
 
     _body_b2d    
-    _sprite;
+    _bitmap;
 
     static eObjectType = {
 	kRectangle : 0,
@@ -21,9 +22,26 @@ class TplanckObject
     }
 
     _objType;
+
+    _uid;
     
-    
-    constructor(pos, width, height, existanceStart, objType, isDynamic=true, isActive=true)
+    constructor(objDict, id)
+    {
+	this.dict2obj(objDict, true)
+	this._uid = id
+    }
+
+    editObject(objDict)
+    {
+	this.dict2obj(objDict, false)
+    }
+
+    sprite()
+    {
+	return this._bitmap
+    }
+    /*
+    constructor(pos, width, height, existanceStart, objType, id, isDynamic=true, isActive=true)
     {
 	this._widthWorld   = TplanckWorld.pixels2world_float(width)
 	this._heightWorld  = TplanckWorld.pixels2world_float(height)
@@ -40,9 +58,12 @@ class TplanckObject
 
 	this._objType = objType
 
-	this._sprite = new Tsprite()
-    }
+	this._sprite = new Tsprite(width,height)
 
+	this._uid = id
+    }
+    */
+    
     setPosition(newPos)
     {
 	this._v_pixels = planck.Vec2(newPos.x, newPos.y)
@@ -186,10 +207,33 @@ class TplanckObject
 	ctx.save()
 
 
+	if (this._bitmap != null) {
+	    ctx.save()
+	    ctx.translate(pos_pixels.x,pos_pixels.y)
+	    ctx.rotate(-rot)
+
+	    ctx.drawImage(this._bitmap,
+			  0,0,
+			  this._bitmap.width,
+			  this._bitmap.height,
+			  
+			  Math.floor(-this._widthPixels  / 2),
+			  Math.floor(-this._heightPixels / 2),
+			  this._widthPixels,
+			  this._heightPixels
+			 );
+
+	    ctx.restore()
+	    
+
+	}
+	/*
 	this._sprite._rot = -rot
 	this._sprite._pos = {x:pos_pixels.x, y:pos_pixels.y}
 	this._sprite.draw(ctx)
+	*/
 
+	
 	ctx.beginPath();
 
 	/*
@@ -336,9 +380,168 @@ class TplanckObject
 	return false    
     }
 
+    /*
     sprite()
     {
 	return this._sprite
+    }
+    */
+
+    
+    obj2dict()
+    {
+	let p  = this._v_pixels
+	let w  = this._widthPixels
+	let h  = this._heightPixels
+	let s  = this._existanceStart
+	let d  = this._isDynamic
+	let a  = this._activateOnCollision
+	let ot = this._objType
+	let id = this._uid
+	
+	let objData = {pos: p, width: w, height: h, start: s,
+		       isDynamic: d,
+		       activateOnCollision: a,
+		       objType: ot,
+		       id: id}
+
+	/*
+	if (this._sprite.hasImage()) {
+	    objData.spriteImage = TimageUtils.img2String(this._sprite._img)
+	    }
+	*/
+	if (this._bitmap != null) {
+	    objData.sprite = TimageUtils.img2String(this._bitmap)
+	}
+
+	return objData
+	
+    }
+
+
+    async dict2obj(objDict, useDefaults=true)
+    {
+	let pos                 = null
+	let width               = null
+	let height              = null
+	let currentFrame        = null
+	let objType             = null
+	let isDynamic           = null
+	let activateOnCollision = null
+	let isActive            = null
+	let bitmap              = null
+
+	if ('pos' in objDict) {
+	    pos = objDict.pos
+	}
+
+	if ('width' in objDict) {
+	    width = objDict.width
+	}
+
+	if ('height' in objDict) {
+	    height = objDict.height
+	}
+
+	if ('currentFrame' in objDict) {
+	    currentFrame = objDict.currentFrame
+	}
+
+	if ('objType' in objDict) {
+	    objType = objDict.objType
+	}
+
+	if ('isDynamic' in objDict) {
+	    isDynamic = objDict.isDynamic
+	}
+
+	if ('activateOnCollision' in objDict) {
+	    activateOnCollision = objDict.activateOnCollision
+	}
+
+	if ('isActive' in objDict) {
+	    isActive = objDict.isActive
+	}
+
+	if ('sprite' in objDict) {
+	    console.log(objDict.sprite.constructor.name)
+	    if (objDict.sprite.constructor.name == "String") {
+		bitmap = TimageUtils.string2Img(objDict.sprite)
+	    } else {
+		bitmap = objDict.sprite
+	    }
+	}
+
+
+	if (useDefaults == true) {
+	    if (pos == null) {
+		pos = {x:0,y:0}
+	    }
+	    if (width == null) {
+		width = 10
+	    }
+	    if (height == null) {
+		height = 10
+	    }
+	    if (currentFrame == null) {
+		currentFrame = 1
+	    }
+	    if (objType == null) {
+		objType = TplanckObject.eObjectType.kRectangle
+	    }
+	    if (isDynamic == null) {
+		isDynamic = true
+	    }
+
+	    if (activateOnCollision == null) {
+		activateOnCollision = false
+	    }
+	    if (isActive == null) {
+		isActive = true
+	    }
+
+	    if (bitmap == null) {
+		bitmap = null
+	    }
+	}
+
+	if (pos != null) {
+	    this._v_pixels = planck.Vec2(pos.x, pos.y)
+	}
+	
+	if (width != null) {
+	    this._widthWorld   = TplanckWorld.pixels2world_float(width)
+	    this._widthPixels  = width	    
+	}
+
+	if (height != null) {
+	    this._heightWorld  = TplanckWorld.pixels2world_float(height)
+	    this._heightPixels = height	    
+	}
+
+	if (currentFrame != null) {
+	    this._existanceStart = currentFrame
+	}
+
+	if (objType != null) {
+	    this._objType = objType
+	}
+	
+	if (isDynamic != null) {
+	    this._isDynamic = isDynamic
+	}
+
+	if (activateOnCollision != null) {
+	    this._activateOnCollision = activateOnCollision
+	}
+	
+	if (isActive != null) {
+	    this._isActive  = isActive
+	}
+
+	if (bitmap != null) {
+	    this._bitmap = bitmap
+	}
     }
 }
 

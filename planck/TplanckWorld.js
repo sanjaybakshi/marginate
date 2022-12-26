@@ -39,6 +39,8 @@ class TplanckWorld
 	    fWorldHeight = 10
 	    fWorldWidth  = fWorldHeight * (fCanvasWidth/fCanvasHeight)
 	}
+
+	this.fCounter = 0
     }
 
 
@@ -118,7 +120,6 @@ class TplanckWorld
 	for (const j of this._fJointList) {
 	    j.removeFromSimulation()	    
 	}
-	
     }
     
     setFrame(f)
@@ -135,20 +136,31 @@ class TplanckWorld
 	}
     }
 
+    generateUID()
+    {
+	let uid = this.fCounter
+	this.fCounter = this.fCounter + 1
+
+	return uid
+    }
 
     
-    addObject(pos, width, height, existanceStart, currentFrame, objType)
+    addObject(objDict)
     {
-	let obj = new TplanckObject(pos, width, height, existanceStart, objType)
+	let obj = new TplanckObject(objDict, this.generateUID())
+
 	this._fObjectList.push(obj)
 
-	if (existanceStart == currentFrame) {
-	    obj.addToSimulation(this._fWorld)
-	}
+	obj.addToSimulation(this._fWorld)
 
 	return obj
     }
 
+    editObject(obj, objDict)
+    {
+	obj.editObject(objDict)
+    }
+    
     removeObject(b)
     {
 	b.removeFromSimulation()
@@ -161,11 +173,9 @@ class TplanckWorld
 
     addJoint(obj1, obj1Pos, obj2, obj2Pos, existanceStart, currentFrame)
     {
-	let joint = new TplanckJoint(obj1, obj1Pos, obj2, obj2Pos, existanceStart)
+	let joint = new TplanckJoint(obj1, obj1Pos, obj2, obj2Pos, existanceStart, this.generateUID())
 	this._fJointList.push(joint)
 
-	console.log(existanceStart,currentFrame)
-	
 	if (existanceStart == currentFrame) {
 	    joint.addToSimulation(this._fWorld)
 	}
@@ -184,7 +194,6 @@ class TplanckWorld
 	let h  = TplanckWorld.pixels2world_float(rectPixelSpace.height)	
 
 	let rectWorldSpace = {left: p1.x, top: p1.y, width: w, height: h}
-	//console.log(r1)
 	
 	let boxes = []
         for (const b of this._fObjectList) {		
@@ -234,6 +243,34 @@ class TplanckWorld
 	return newVec
     }
 
+    world2dict()
+    {
+	let objs   = []
+	let joints = []
+
+	for (const b of this._fObjectList) {
+	    let bS = b.obj2dict()
+	    objs.push(bS)	    
+	}
+	for (const j of this._fJointList) {
+	    let jS = j.joint2dict()
+	    joints.push(jS)	    
+	}
+
+	return {objs: objs, joints: joints}
+    }
+
+
+    dict2world(d)
+    {
+	let objs   = d.objs
+	let joints = d.joints
+
+	for (const obj of objs) {
+	    let objDict = obj
+	    this.addObject(objDict)
+	}
+    }
 }
 
 export default TplanckWorld

@@ -20,7 +20,7 @@ class TmarginateModel {
 
 	this.fPauseAnim      = true
 	
-	this.fFrameDimensions = {width:1024,height:520}
+	this.fFrameDimensions = {width:1024,height:512}
 
 	this.fFrameImages = []
 
@@ -54,10 +54,8 @@ class TmarginateModel {
     
     makeFrameImage()
     {
-	var scale = window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
-	
-	this.fFrameImages[this.fCurrentFrame] = TimageUtils.makeImage(this.fFrameDimensions.width*scale,
-								      this.fFrameDimensions.height*scale)
+	this.fFrameImages[this.fCurrentFrame] = TimageUtils.makeImage(this.fFrameDimensions.width,
+								      this.fFrameDimensions.height)
     }
 
     getGhostFrameImages()
@@ -151,6 +149,16 @@ class TmarginateModel {
 
     addObject(objDict, updateSelectionList=true)
     {
+	let newObj = fModel.fPlanckWorld.addObject(objDict)
+
+	if (updateSelectionList == true) {
+	    fModel.fSelectionList.replace([newObj])
+	}
+	return newObj
+    }
+    /*
+    addObject(objDict, updateSelectionList=true)
+    {
 	let center       = {x:0,y:0}
 	let width        = 10
 	let height       = 10
@@ -178,8 +186,8 @@ class TmarginateModel {
 	}
 	
 	if ('sprite' in objDict) {
-	    width  = objDict.sprite.width
-	    height = objDict.sprite.height 
+	    width  = objDict.sprite.width  / TimageUtils.numPixels2device()
+	    height = objDict.sprite.height / TimageUtils.numPixels2device()
 	}
 
 	let newBox = fModel.fPlanckWorld.addObject(center, width, height,
@@ -187,7 +195,7 @@ class TmarginateModel {
 						   fModel.getCurrentFrame(),
 						   objType)
 	if ('sprite' in objDict) {
-	    newBox._sprite.initBitmap(objDict.sprite, 1.0)
+	    newBox._sprite.initBitmap(objDict.sprite)
 	}
 
 	if (updateSelectionList == true) {
@@ -196,7 +204,7 @@ class TmarginateModel {
 	
 	return newBox
     }
-
+*/
     addObjects(objDictList)
     {
 	let newObjects = []
@@ -245,6 +253,67 @@ class TmarginateModel {
 	}
 	
 	return newJoint
+    }
+/*
+    editObject(obj, objDict)
+    {	
+	let center       = null
+	let width        = null
+	let height       = null
+	let currentFrame = null
+	let objType      = null
+	let bitmap       = null
+	
+	if ('center' in objDict) {
+	    center = objDict.center
+	}
+
+	if ('width' in objDict) {
+	    width = objDict.width
+	}
+
+	if ('height' in objDict) {
+	    height = objDict.height
+	}
+
+	if ('currentFrame' in objDict) {
+	    currentFrame = objDict.currentFrame
+	}
+
+	if ('objType' in objDict) {
+	    objType = objDict.objType
+	}
+	
+	if ('sprite' in objDict) {
+	    bitmap = objDict.sprite
+	}
+
+	if (bitmap != null) {
+	    obj._sprite._img = bitmap
+	}
+    }
+*/
+    editObject(obj, objDict)
+    {	
+	fModel.fPlanckWorld.editObject(obj, objDict)
+    }
+
+    dict2Model(mDict)
+    {
+	let modelInfo  = mDict.model
+	let planckInfo = mDict.planck
+
+	
+	this.fPlanckWorld.dict2world(planckInfo)	
+    }
+
+    model2Dict()
+    {
+	let modelInfo  = {name: "sanjay"}
+	let planckInfo = this.fPlanckWorld.world2dict()
+
+	return {model: modelInfo,
+		planck: planckInfo}
     }
 }
 

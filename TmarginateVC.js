@@ -49,7 +49,7 @@ class TmarginateVC
 
 	
 	let canvasWidthHeight = this.fCanvas.getWidthHeight()
-	console.log(canvasWidthHeight)
+
 	let x = newWindowWidth  / 2 - (canvasWidthHeight.width+propertiesPanelWidth)/2
 	let y = newWindowHeight / 2 - (canvasWidthHeight.height)/2
 
@@ -58,12 +58,9 @@ class TmarginateVC
 	
 	y = middleHeightY - canvasWidthHeight.height/2
 
-	console.log(heightAvailable, middleHeightY, y)
 	this.fCanvas.showAt({x:x,y: y})
 
 	
-	console.log(window.innerHeight-sliderWH.height)
-	console.log(timeSliderPos.y)
 	//console.log(toolbarPos.y)
 	//console.log(toolbarWidthHeight.height)
 	//let ppHeight = timeSliderPos.y - (toolbarPos.y+toolbarWidthHeight.height)

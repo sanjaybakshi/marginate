@@ -204,7 +204,6 @@ class TscissorsTool extends Ttool
 
 	
 	this._objRect = null
-	console.log("engaging")
 
 	if (fModel.fSelectionList._sList.length > 0) {
 
@@ -231,8 +230,6 @@ class TscissorsTool extends Ttool
 	    // Convert canvas coordinates to window coordinates.
 	    //
 
-	    console.log(this.fCanvas)
-	    
 	    let pos_wnd = this.fCanvas.canvasCoordsToWindow( {x: this._objRect._x2,
 							      y: this._objRect._y2} )
 	    this.fScissorsGoDiv.showAt(pos_wnd)
@@ -303,7 +300,7 @@ class TscissorsTool extends Ttool
 	newObjInfo.forEach(object => {
 	    dictArray.push(object.dict)
 	});
-	
+
 	fModel.addObjects(dictArray)
 
 	
@@ -422,15 +419,15 @@ class TscissorsTool extends Ttool
 							       obj.heightInPixels())
 
 	    
-	    d = {center: center,
+	    d = {pos: center,
 		 width: width,
 		 height: height,
 		 currentFrame: fModel.getCurrentFrame(),
 		 objType: TplanckObject.eObjectType.kRectangle}
 
-	    if (obj.sprite().hasImage()) {
+	    if (obj.sprite() != null) {
 
-		let objSpriteImg = obj.sprite().image()
+		let objSpriteImg = obj.sprite()
 		
 		let cropRect_imgSpace =
 		    Trect.constructFromCoords({x1: Tmath.remap(objRect._x1, objRect._x2,

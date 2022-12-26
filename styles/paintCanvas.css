@@ -4,7 +4,7 @@
     background-color: lightgrey;
     /*background-color: white;*/
     position: absolute;
-    border:           1px solid midnightblue;
+    border:           0px solid midnightblue;
 
     user-select: none; /* can't be selected. */
 }

@@ -149,39 +149,60 @@ class Tstroke
 	}
 	
     }
+
+    /*
     async drawOnImage(img)
     {
 	let inMemoryCanvas  = document.createElement("canvas")
 	let inMemoryContext = inMemoryCanvas.getContext("2d")
 
-	inMemoryCanvas.width = img.width
+	inMemoryCanvas.width  = img.width
 	inMemoryCanvas.height = img.height
 
-	inMemoryContext.scale(2,2)
+	var scale = window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
 	
-	inMemoryContext.drawImage(img, 0, 0, img.width/2, img.height/2);
+	inMemoryContext.scale(scale,scale)
+
+	//console.log(img.width,img.height)
 	
-	/*
-	// Draw blue triangle
-	inMemoryContext.beginPath();
-	inMemoryContext.fillStyle = 'blue';
-	inMemoryContext.moveTo(20, 20);
-	inMemoryContext.lineTo(180, 20);
-	inMemoryContext.lineTo(130, 130);
-	inMemoryContext.closePath();
-	inMemoryContext.fill();
-	*/
+	//inMemoryContext.drawImage(img, 0, 0, img.width/2, img.height/2);
+	inMemoryContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width/scale, img.height/scale);
+
+	
 	// draw stroke.
 	//
 	this.draw(inMemoryContext)
-
 
 	let newImage = await TimageUtils.canvas2img(inMemoryCanvas)
 
 	return newImage
     }
+*/
 
+    async drawOnImage(img, canvasWidth, canvasHeight)
+    {
+	let inMemoryCanvas  = document.createElement("canvas")
+	let inMemoryContext = inMemoryCanvas.getContext("2d")
 
+	inMemoryCanvas.width  = img.width
+	inMemoryCanvas.height = img.height
+
+	inMemoryContext.scale(img.width/canvasWidth, img.height/canvasHeight)
+
+	//console.log(img.width,img.height)
+	
+	//inMemoryContext.drawImage(img, 0, 0, img.width/2, img.height/2);
+	inMemoryContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasWidth, canvasHeight)
+
+	
+	// draw stroke.
+	//
+	this.draw(inMemoryContext)
+
+	let newImage = await TimageUtils.canvas2img(inMemoryCanvas)
+
+	return newImage
+    }
     
     drawOnImage_no_work_on_safari_or_ios(img)
     {

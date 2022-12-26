@@ -1,6 +1,7 @@
 import Ttool       from "../libs/Ttool.js"
 import Tstroke     from "../libs/Tstroke.js"
 import Tpointer    from "../libs/Tpointer.js";
+import TimageUtils from "../libs/TimageUtils.js";
 
 
 import { fModel } from '../TmarginateModel.js'
@@ -56,19 +57,62 @@ class TpaintTool extends Ttool
     {
 	super.pointerUp(e)
 
-	let frameImg = fModel.getFrameImage()
 
-	if (frameImg == null) {
-	    fModel.makeFrameImage()
-	    frameImg = fModel.getFrameImage()
+	// Check for selection.
+	//
+	if (fModel.fSelectionList._sList.length > 0) {
+
+	    let obj = fModel.fSelectionList._sList[0]
+
+	    /*
+	    if (!obj._sprite.hasImage()) {
+		obj._sprite.createBitmap(obj.widthInPixels(), obj.heightInPixels())
+		}
+		
+	    if (obj._bitmap == null {
+		obj._sprite.createBitmap(obj.widthInPixels(), obj.heightInPixels())
+	    }
+
+	    let bitmap = obj._sprite.image()
+	    */
+	    
+	    // transform the stroke points to the coordinates on the image.
+	    //
+	    let bCenter = obj.getCenterInPixels()
+	    let left = bCenter.x - obj.widthInPixels()  / 2
+	    let top  = bCenter.y - obj.heightInPixels() / 2
+
+	    // Need to clone this as translating will affect stroke
+	    //
+	    let s = this.fCurrentStroke.clone()
+	    s.translate(left, top)
+	    
+
+	    let bitmap = obj.sprite()
+	    if (bitmap == null) {
+		bitmap = TimageUtils.makeImage(obj._widthPixels, obj._heightPixels)		
+	    }
+	    
+	    let strokedImg = await s.drawOnImage(bitmap, obj._widthPixels, obj._heightPixels)
+	    fModel.editObject(obj, {sprite: strokedImg})
+
+	    
+	} else {
+	    let frameImg = fModel.getFrameImage()
+
+	    if (frameImg == null) {
+		fModel.makeFrameImage()
+		frameImg = fModel.getFrameImage()
+	    }
+	    
+	    let strokedImg = await this.fCurrentStroke.drawOnImage(frameImg,
+								   this.fCanvas.getWidthHeight().width,
+								   this.fCanvas.getWidthHeight().height)
+
+	    fModel.setFrameImage(strokedImg)
 	}
+
 	
-	let strokedImg = await this.fCurrentStroke.drawOnImage(frameImg)
-
-
-	fModel.setFrameImage(strokedImg)
-	//paintCanvas.setBackgroundImage(strokedImg)	    
-
 	this._strokeStarted = false
 	this.fCurrentStroke.clear()
 

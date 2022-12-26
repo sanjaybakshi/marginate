@@ -79,7 +79,7 @@ class TmarginateCanvas extends Tcanvas
 	}
 
 	if (img != null) {
-	    this.fContext.drawImage(img, 0, 0, img.width/2, img.height/2)
+	    this.fContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, wh.width, wh.height)	    
 	    this.fLastFrameImage = img
 	} 
 
@@ -107,7 +107,7 @@ class TmarginateCanvas extends Tcanvas
 
 	for (const gImg of ghostImages) {
 	    this.fContext.globalAlpha = 0.5
-	    this.fContext.drawImage(gImg, 0, 0, gImg.width/2, gImg.height/2)
+	    this.fContext.drawImage(gImg, 0, 0, gImg.width, gImg.height, 0, 0, wh.width, wh.height)
 	}
 
 	this.fContext.globalAlpha = 1.0
@@ -115,7 +115,7 @@ class TmarginateCanvas extends Tcanvas
 	let img = fModel.getFrameImage()
 	
 	if (img != null) {
-	    this.fContext.drawImage(img, 0, 0, img.width/2, img.height/2)
+	    this.fContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, wh.width, wh.height)
 	    this.fLastFrameImage = img
 	} 
 
@@ -140,8 +140,6 @@ class TmarginateCanvas extends Tcanvas
     setWidthHeight(wh)
     {
 	super.setWidthHeight(wh)
-	
-	var scale = window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.	
     }
 
     pointerDown(e)
@@ -189,11 +187,14 @@ class TmarginateCanvas extends Tcanvas
     async onPaste(e)
     {
 	e.preventDefault()
-	
+	console.log("before paste")
 	var pastedImage = await ThtmlUtils.clipboard2image(e)
+	console.log("called on paste")
 
-	fModel.addObject({center: {x:this.fMousePosition.x, y: this.fMousePosition.y},
+	fModel.addObject({pos: {x:this.fMousePosition.x, y: this.fMousePosition.y},
+			  width: pastedImage.width, height: pastedImage.height,
 			  sprite:  pastedImage})
+	console.log("paste")
 	
     }
 }

@@ -66,7 +66,7 @@ class TaddObjectTool extends Ttool
 	    //
 	    let box = this.fCurrentStroke.axisAlignedBox()
 	    if (box != null) {
-		let center = box['center'];
+		let pos    = box['center'];
 		let width  = box['width'];
 		let height = box['height'];
 
@@ -74,7 +74,7 @@ class TaddObjectTool extends Ttool
 		//
 		if (width > 5 && height > 5) {
 
-		    fModel.addObject({center: center,
+		    fModel.addObject({pos: pos,
 				      width: width,
 				      height: height,
 				      currentFrame: fModel.getCurrentFrame(),

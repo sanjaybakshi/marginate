@@ -12,7 +12,9 @@ class TplanckJoint
     
     _joint_b2d;
 
-    constructor(o1, o1Pos, o2, o2Pos, existanceStart)
+    _uid;
+    
+    constructor(o1, o1Pos, o2, o2Pos, existanceStart, id)
     {
 	this._obj1    = o1
 	this._obj2    = o2
@@ -20,6 +22,8 @@ class TplanckJoint
 	this._obj2Pos = o2Pos
 
 	this._existanceStart = existanceStart
+
+	this._uid = id
     }
     
     removeFromSimulation()
@@ -133,6 +137,23 @@ class TplanckJoint
 
 	ctx.restore()	
     }
+
+    joint2dict()
+    {
+	let o1id = this._obj1._uid
+	let o2id = this._obj2._uid
+	
+	let o1Pos = this._obj1Pos
+	let o2Pos = this._obj2Pos
+
+	let start = this._existanceStart
+
+	let id    = this._uid
+	
+	let jointData = {obj1: o1id, obj2: o2id, obj1Pos: o1Pos, obj2Pos: o2Pos, start: start, id: id}
+	return jointData
+    }
+    
 }
 
 export default TplanckJoint
