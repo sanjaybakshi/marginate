@@ -12,20 +12,23 @@ class TplanckJoint
     
     _joint_b2d;
 
+    static eJointType = {
+	kMotor     : 0,
+	kPrismatic : 1,
+	kDistance  : 2,
+	kRevolute  : 3
+    }
+
+    _jointType;
+    
     _uid;
     
-    constructor(o1, o1Pos, o2, o2Pos, existanceStart, id)
+    constructor(jointDict, id)
     {
-	this._obj1    = o1
-	this._obj2    = o2
-	this._obj1Pos = o1Pos
-	this._obj2Pos = o2Pos
-
-	this._existanceStart = existanceStart
-
+	this.dict2joint(jointDict, true)
 	this._uid = id
     }
-    
+
     removeFromSimulation()
     {
 	this._joint_b2d = null
@@ -39,10 +42,21 @@ class TplanckJoint
     
     addToSimulation(world)
     {
+	if (this._objType == TplanckJoint.eJointType.kMotor) {
+	    
+	} else if (this._objType == TplanckJoint.eJointType.kPrismatic) {
+	    
+	} else if (this._objType == TplanckJoint.eJointType.kDistance) {
+	    
+	} else if (this._objType == TplanckJoint.eJointType.kRevolute) {
+	    
+	}
+	    
 	//let j = this.makeDistanceJoint(world)
 	let j = this.makeMotorJoint(world)
 	//let j = this.makeRevoluteJoint(world)
 	this._joint_b2d = j
+
 	
     }
 
@@ -152,6 +166,79 @@ class TplanckJoint
 	
 	let jointData = {obj1: o1id, obj2: o2id, obj1Pos: o1Pos, obj2Pos: o2Pos, start: start, id: id}
 	return jointData
+    }
+
+    dict2joint(jointDict, useDefaults=true)
+    {
+	let obj1                = null
+	let obj1Pos             = null
+	let obj2                = null
+	let obj2Pos             = null
+	let currentFrame        = null
+	
+	if ('obj1' in jointDict) {
+	    obj1 = jointDict.obj1
+	}
+
+	if ('obj1Pos' in jointDict) {
+	    obj1Pos = jointDict.obj1Pos
+	}
+
+	if ('obj2' in jointDict) {
+	    obj2 = jointDict.obj2
+	}
+
+	if ('obj2Pos' in jointDict) {
+	    obj2Pos = jointDict.obj2Pos
+	}
+
+	if ('currentFrame' in jointDict) {
+	    currentFrame = jointDict.currentFrame
+	}
+	
+	if (useDefaults == true) {
+	    if (obj1 == null) {
+		obj1 = null
+	    }
+	    if (obj1Pos == null) {
+		obj1Pos = {x:0,y:0}
+	    }
+	    if (obj2 == null) {
+		obj2 = null
+	    }
+	    if (obj2Pos == null) {
+		obj2Pos = {x:0,y:0}
+	    }
+	    if (currentFrame == null) {
+		currentFrame = 1
+	    }
+	    
+	}
+
+	if (obj1 != null) {
+	    this._obj1 = obj1
+	}
+	if (obj1Pos != null) {
+	    this._obj1Pos = obj1Pos
+	}
+	if (obj2 != null) {
+	    this._obj2 = obj2
+	}
+	if (obj2Pos != null) {
+	    this._obj2Pos = obj2Pos
+	}
+	if (currentFrame != null) {
+	    this._existanceStart = currentFrame
+	}
+    }
+
+    static pullUIDfromDict(jointDict)
+    {
+	let id = null
+	if ('id' in jointDict) {
+	    id = jointDict.id
+	}
+	return id
     }
     
 }

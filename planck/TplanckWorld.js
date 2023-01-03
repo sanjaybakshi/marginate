@@ -147,7 +147,13 @@ class TplanckWorld
     
     addObject(objDict)
     {
-	let obj = new TplanckObject(objDict, this.generateUID())
+	let uid = TplanckObject.pullUIDfromDict(objDict)
+
+	if (uid == null) {
+	    uid = this.generateUID()
+	}
+	
+	let obj = new TplanckObject(objDict, uid)
 
 	this._fObjectList.push(obj)
 
@@ -171,6 +177,7 @@ class TplanckWorld
 	
     }
 
+    /*
     addJoint(obj1, obj1Pos, obj2, obj2Pos, existanceStart, currentFrame)
     {
 	let joint = new TplanckJoint(obj1, obj1Pos, obj2, obj2Pos, existanceStart, this.generateUID())
@@ -182,6 +189,39 @@ class TplanckWorld
 
 	return joint	
     }
+    */
+    addJoint(jointDict)
+    {
+	let uid = TplanckJoint.pullUIDfromDict(jointDict)
+
+	if (uid == null) {
+	    uid = this.generateUID()
+	}
+
+	// Check to see if the jointDict needs to resolve the object references.
+	// This happens when addJoint is called from loading a file.
+	//
+	if ('obj1' in jointDict) {
+	    if (jointDict.obj1.constructor.name != "TplanckObject") {
+		let obj1 = this.objFromId(jointDict.obj1)
+		jointDict.obj1 = obj1
+	    }
+	}
+	if ('obj2' in jointDict) {
+	    if (jointDict.obj2.constructor.name != "TplanckObject") {
+		let obj2 = this.objFromId(jointDict.obj2)
+		jointDict.obj2 = obj2
+	    }
+	}
+	
+	
+	let joint = new TplanckJoint(jointDict, uid)
+	this._fJointList.push(joint)
+	joint.addToSimulation(this._fWorld)
+
+	return joint	
+    }
+
     
     intersectRect(rectPixelSpace)
     //
@@ -270,6 +310,24 @@ class TplanckWorld
 	    let objDict = obj
 	    this.addObject(objDict)
 	}
+
+	for (const j of joints) {
+	    let jointDict = j
+	    this.addJoint(jointDict)
+	}
+    }
+
+    objFromId(id)
+    {
+	let foundObj = null
+	
+	for (const b of this._fObjectList) {	
+	    if (b._uid == id) {
+		foundObj = b
+		break
+	    }
+	}
+	return foundObj
     }
 }
 

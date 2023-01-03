@@ -1,0 +1,92 @@
+@import './vars.css';
+
+
+.jointType-menu-container {
+
+    display:          none;            /* Hidden by default */
+    position:         absolute;        /* Stay in place */
+    z-index:          1;               /* Sit on top */
+    padding:	      10px;
+    background-color: var(--window-background-color);
+    margin: 0px;
+    border-radius: 12px;
+    box-shadow: 0px 3px 15px rgba(0,0,0,0.2);
+}
+
+
+/* This is here for debugging */
+.joint-menu-item {
+    box-sizing:       border-box;
+    border:           1px solid midnightblue;
+    padding:          10px;
+    margin:           10px;
+    background-color: green;
+}
+
+.joint-menu-item:hover {
+    background-color: var(--toolbutton-hover-bgcolor);
+    border-radius:    var(--toolbar-menu-hover-border-radius);
+}
+
+
+.jointType-menu-item-image {
+    width:      36px;
+    height:     36px;    
+    box-sizing: border-box;
+    /* this is the padding around the image. */
+    padding:    0.5em;    
+}
+
+.jointType-menu-item-seperator {
+/*    border-style: dotted; */
+
+/*    box-sizing:       border-box; */
+/*    border:           1px solid midnightblue; */
+    padding:          2px;
+    margin:           5px;
+    background-color: green;
+    
+    /*
+    margin: 6px 0; 
+    background: blue;
+*/
+}
+
+.jointType-menu-item-image:hover {
+    background-color: var(--toolbutton-hover-bgcolor);
+    border-radius:    var(--toolbar-menu-hover-border-radius);
+}
+
+.jointType-menu-item-color {
+    width:      36px;
+    height:     36px;
+    box-sizing: border-box;
+    padding:    0.5em;    
+}
+
+.jointType-menu-item-color:hover {
+    background-color: var(--toolbutton-hover-bgcolor);
+    border-radius:    var(--toolbutton-hover-border-radius);
+}
+
+
+.jointType-dropdown {
+  display: none;
+  position: absolute;
+  //right: 0;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.jointType-dropdown a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.jointType-dropdown a:hover {background-color: #f1f1f1;}
+.jointType-dropdown:hover .dropdown-content {display: block;}
+.jointType-dropdown:hover .dropbtn {background-color: #3e8e41;}

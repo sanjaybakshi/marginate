@@ -377,7 +377,7 @@ class TplanckObject
     }
 
 
-    async dict2obj(objDict, useDefaults=true)
+    dict2obj(objDict, useDefaults=true)
     {
 	let pos                 = null
 	let width               = null
@@ -422,7 +422,6 @@ class TplanckObject
 	}
 
 	if ('sprite' in objDict) {
-	    console.log(objDict.sprite.constructor.name)
 	    if (objDict.sprite.constructor.name == "String") {
 		sprite = TimageUtils.string2Img(objDict.sprite)
 	    } else {
@@ -500,6 +499,15 @@ class TplanckObject
 	if (sprite != null) {
 	    this._sprite = sprite
 	}
+    }
+
+    static pullUIDfromDict(objDict)
+    {
+	let id = null
+	if ('id' in objDict) {
+	    id = objDict.id
+	}
+	return id
     }
 }
 

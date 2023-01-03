@@ -8,7 +8,7 @@ import Tdiv           from "../libs/Tdiv.js";
 import Tmath          from "../libs/Tmath.js";
 import TimageUtils    from "../libs/TimageUtils.js";
 
-import TplanckObject  from "../planck/TplanckObject.js";
+import TplanckJoint   from "../planck/TplanckJoint.js";
 
 import { fModel }     from '../TmarginateModel.js'
 
@@ -24,7 +24,7 @@ class TjointTool extends Ttool
 
 	this.fJointGoDiv          = new Tdiv(this.gJointGoDivId)
 	this.fJointGoBtn          = new Tdiv(this.gJointGoBtnId)
-
+	
 	this.fJointGoBtn._div.addEventListener('pointerdown', (e) => {
 	    this.makeJoint()
 	});
@@ -44,9 +44,36 @@ class TjointTool extends Ttool
 	this._objPt2                 = {x:200,y:90}
 	this._anchorPt2              = {x:200,y:130}
 	this._move_objPt2_started    = false
-	this._move_anchorPt2_started = false	
+	this._move_anchorPt2_started = false
+
+	this._wheel   = null
+	this._body    = null
+	this._wheelPt = null
+	this._bodyPt  = null
+	
+	this._strokeStarted = false
+
+	this._jointType = TplanckJoint.eJointType.kMotor
     }
 
+    setMotorMode()
+    {
+	this._jointType = TplanckJoint.eJointType.kMotor
+    }
+
+    setPrismaticMode()
+    {
+	this._jointType = TplanckJoint.eJointType.kMotor	
+    }
+    setDistanceMode()
+    {
+	this._jointType = TplanckJoint.eJointType.kMotor	
+    }
+    setRevoluteMode()
+    {
+	this._jointType = TplanckJoint.eJointType.kMotor	
+    }
+     
     
     pointerDown(e)
     {
@@ -95,6 +122,20 @@ class TjointTool extends Ttool
 
 	    this._obj1                   = null
 	    this._obj2                   = null
+
+	    // Draw a stroke to make the connection.
+	    //
+	    
+	    // Check to see if the stroke was started inside a wheel.
+	    //
+	    let r = {left: pointerInfo.x, top: pointerInfo.y, width: 1, height: 1}	
+	    let objs = fModel.fPlanckWorld.intersectRect(r)
+	    if (objs.length > 0) {
+		this._wheel = objs[0]
+
+		this._wheelPt = this._wheel.getCenterInPixels()
+		this._strokeStarted = true		
+	    }
 	}
     }
 
@@ -115,6 +156,22 @@ class TjointTool extends Ttool
 	} else if (this._move_anchorPt2_started) {
 	    this._anchorPt2 = {x:x,y:y}
 	}
+
+	if (this._strokeStarted) {
+
+	    // Check to see if the stroke ends up in a valid body.
+	    //
+	    let r = {left: pointerInfo.x, top: pointerInfo.y, width: 1, height: 1}	
+	    let objs = fModel.fPlanckWorld.intersectRect(r)
+	    if (objs.length > 0 && objs[0] != this._wheel) {
+		this._body = objs[0]
+
+		this._bodyPt = this._body.getCenterInPixels()
+	    } else {	    
+		this._bodyPt = {x:pointerInfo.x,y:pointerInfo.y}
+		this._body = null
+	    }
+	}	
     }
 
     pointerUp(e)
@@ -130,7 +187,16 @@ class TjointTool extends Ttool
 	    this.drawGoButton()
 	} else {
 	    this.fJointGoDiv.hide()
-	}	
+	}
+
+	if (this._strokeStarted == true) {
+	    this._strokeStarted = false
+
+	    if (this._wheel != null && this._body != null) {
+		this.drawNewGoButton()
+	    }
+
+	}
     }
 
     draw(ctx)
@@ -190,6 +256,25 @@ class TjointTool extends Ttool
 	ctx.moveTo(this._anchorPt1.x, this._anchorPt1.y)
 	ctx.lineTo(this._anchorPt2.x, this._anchorPt2.y)
 	ctx.stroke()
+
+
+	// Draw the joint as a stroke...
+	if (this._wheelPt != null &&
+	    this._bodyPt  != null) {
+	    ctx.beginPath()
+	    ctx.lineWidth = 2
+	    ctx.setLineDash([5,5])
+
+	    if (this._body != null) {
+		ctx.strokeStyle = 'yellow'
+	    } else {
+		ctx.strokeStyle = 'purple'
+	    }
+	    
+	    ctx.moveTo(this._wheelPt.x, this._wheelPt.y)
+	    ctx.lineTo(this._bodyPt.x, this._bodyPt.y)
+	    ctx.stroke()
+	}
 	
 	ctx.restore()
     }
@@ -198,6 +283,8 @@ class TjointTool extends Ttool
     {
 	super.dismiss()
 	this.fJointGoDiv.hide()
+
+	this.fToolInfoDiv.hide()
     }
 
     engage()
@@ -222,6 +309,20 @@ class TjointTool extends Ttool
 	} else {
 	    this.fJointGoDiv.hide()
 	}	
+
+
+
+	// Draw helpful message.
+	//
+	/*
+	let boundRect = Trect.constructFromPoints([this._anchorPt1, this._anchorPt2])
+	let pos_wnd = this.fCanvas.canvasCoordsToWindow( {x: boundRect._x2,
+	y: boundRect._y2 + 20} )
+	*/
+
+	this.fToolInfoTxt._div.innerHTML = "Draw a stroke from the wheel to the body."
+	this.fToolInfoDiv.showAt({x:200,y:200})
+	
     }
 
     canDrawGoButton()
@@ -245,6 +346,9 @@ class TjointTool extends Ttool
 	    return true
 	}
 
+	if (this._wheel != null && this._body != null) {
+	    return true
+	}
 	return false	
     }
     
@@ -260,6 +364,23 @@ class TjointTool extends Ttool
 	this.fJointGoDiv.showAt(pos_wnd)
     }
 
+    drawNewGoButton()
+    {
+	// Draw it to the right of the wheel.
+	//
+	let posX = this._wheelPt.x + this._wheel._widthPixels/2
+	let posY = this._wheelPt.y + this._wheel._heightPixels/2	
+
+	//posX = posX + 10
+	//posY = posY = 10
+
+	let pos_wnd = this.fCanvas.canvasCoordsToWindow( {x: posX + 10,
+							  y: posY + 10} )
+	
+	
+	this.fJointGoDiv.showAt(pos_wnd)
+    }
+    
     
     makeJoint()
     {
@@ -267,14 +388,26 @@ class TjointTool extends Ttool
 	//
 	//
 
-	newJointInfo.obj1    = this._obj1
-	newJointInfo.obj1Pos = this._anchorPt1
+	if (this._obj1 != null && this._obj2 != null) {
+	    newJointInfo.obj1    = this._obj1
+	    newJointInfo.obj1Pos = this._anchorPt1
+	    
+	    newJointInfo.obj2    = this._obj2
+	    newJointInfo.obj2Pos = this._anchorPt2
 
-	newJointInfo.obj2    = this._obj2
-	newJointInfo.obj2Pos = this._anchorPt2
+	    newJointInfo.jointType = this._jointType
+	    fModel.addJoint(newJointInfo)
+	} else {
+	    newJointInfo.obj1    = this._body
+	    newJointInfo.obj1Pos = this._wheelPt
+	    
+	    newJointInfo.obj2    = this._wheel
+	    newJointInfo.obj2Pos = this._wheelPt
 
-	fModel.addJoint(newJointInfo)
-	
+	    newJointInfo.jointType = this._jointType	    
+	    fModel.addJoint(newJointInfo)
+
+	}
 	this.engage()
     }
 

@@ -11,6 +11,8 @@ import TxformTool           from "./tools/TxformTool.js"
 import TaddObjectTool       from "./tools/TaddObjectTool.js"
 
 import TscissorsTool        from "./tools/TscissorsTool.js"
+
+import TjointToolTypesWnd   from "./tools/TjointToolTypesWnd.js"
 import TjointTool           from "./tools/TjointTool.js"
 
 class TmarginateToolbar extends Ttoolbar
@@ -28,11 +30,21 @@ class TmarginateToolbar extends Ttoolbar
 	this.gSelectId                = "selectId"
 	this.gXformId                 = "xformId"			
 	this.gScissorsId              = "scissorsId"
-	this.gJointId                 = "jointId"
+	//this.gJointId                 = "jointId"
 
 	this.gPaintRectangleId        = "paintRectangleId"	
 	this.gPaintCircleId           = "paintCircleId"
 
+	this.gJointTypeWnd            = "jointTypeWndId"
+	this.gJointTypeBtn            = "jointTypeBtnId"
+	
+	this._jointTypeWnd            = new TjointToolTypesWnd(this.gJointTypeWnd, this)
+
+	this._jointCtrl               = new TpopupButton(this.gJointTypeBtn,
+							 this._jointTypeWnd)
+	
+
+	
 	this.gPaintStrokePropertiesId = "paintStrokePropertiesId"
 
 	this.gMainMenuId              = "menuButtonId"
@@ -54,8 +66,8 @@ class TmarginateToolbar extends Ttoolbar
 	this._scissorsCtrl  = document.getElementById(this.gScissorsId)
 	this.respondToClick(this._scissorsCtrl)
 
-	this._jointCtrl  = document.getElementById(this.gJointId)
-	this.respondToClick(this._jointCtrl)
+	//this._jointCtrl  = document.getElementById(this.gJointId)
+	//this.respondToClick(this._jointCtrl)
 
 	this._paintRectangleCtrl  = document.getElementById(this.gPaintRectangleId)
 	this.respondToClick(this._paintRectangleCtrl)
@@ -90,25 +102,50 @@ class TmarginateToolbar extends Ttoolbar
     respondToClick(toolCtrl)
     {
 	toolCtrl.addEventListener('pointerdown', (e) => {
-	    this.toolChange(e)
+
+	    if (e.target.id == this.gPaintBrushId) {
+		this.toolChange(this.fPaintTool, this._paintBrushCtrl)
+		this.fPaintTool.setPaintMode()		
+	    } else if (e.target.id == this.gPaintEraserId) {
+		this.toolChange(this.fPaintTool, this._paintEraserCtrl)
+		this.fPaintTool.setEraserMode()		
+	    } else if (e.target.id == this.gSelectId) {
+		this.toolChange(this.fSelectTool, this._selectCtrl)	    		
+	    } else if (e.target.id == this.gXformId) {
+		this.toolChange(this.fXformTool, this._xformCtrl)	    				
+	    } else if (e.target.id == this.gScissorsId) {
+		this.toolChange(this.fScissorsTool, this._scissorsCtrl)	    				
+	    //} else if (e.target.id == this.gJointId) {
+		//this.toolChange(this.fJointTool, this._jointCtrl)	    						
+	    } else if (e.target.id == this.gPaintRectangleId) {
+		this.toolChange(this.fAddObjectTool, this._paintRectangleCtrl)
+		this.fAddObjectTool.setRectangleMode()
+	    } else if (e.target.id == this.gPaintCircleId) {
+		this.toolChange(this.fAddObjectTool, this._paintCircleCtrl)
+		this.fAddObjectTool.setCircleMode()
+	    }
+
+	//this._currentTool.engage()
+	
+	e.stopPropagation()
 	});
     }
 
 
     activateToolStyle(toolButtonCtrl)
     {
-		const toolButtonPressColor      = TcssUtils.getCssVariableValue('--toolbutton-press-color')
-		const toolButtonBorderRad       = TcssUtils.getCssVariableValue('--toolButton-press-border-radius')
-
-		toolButtonCtrl.style.backgroundColor = toolButtonPressColor
-		toolButtonCtrl.style.borderRadius    = toolButtonBorderRad
+	const toolButtonPressColor      = TcssUtils.getCssVariableValue('--toolbutton-press-color')
+	const toolButtonBorderRad       = TcssUtils.getCssVariableValue('--toolButton-press-border-radius')
+	
+	toolButtonCtrl.style.backgroundColor = toolButtonPressColor
+	toolButtonCtrl.style.borderRadius    = toolButtonBorderRad
     }
 
     deactivateToolStyle(toolButtonCtrl)
     {
-		const toolButtonBackgroundColor = TcssUtils.getCssVariableValue('--toolbar-background-color')
-
-		toolButtonCtrl.style.backgroundColor = toolButtonBackgroundColor
+	const toolButtonBackgroundColor = TcssUtils.getCssVariableValue('--toolbar-background-color')
+	
+	toolButtonCtrl.style.backgroundColor = toolButtonBackgroundColor
     }
     
     deactivateAllToolStyles()
@@ -118,72 +155,17 @@ class TmarginateToolbar extends Ttoolbar
 	this.deactivateToolStyle(this._selectCtrl)
 	this.deactivateToolStyle(this._xformCtrl)
 	this.deactivateToolStyle(this._scissorsCtrl)
-	this.deactivateToolStyle(this._jointCtrl)
+	this.deactivateToolStyle(this._jointCtrl._div)
 	this.deactivateToolStyle(this._paintRectangleCtrl)
 	this.deactivateToolStyle(this._paintCircleCtrl)	    
     }
-    
-    toolChange(e)
+
+    toolChange(tool, toolButton)
     {
-
-	if (e.target.id == this.gPaintBrushId) {
-	    this.deactivateAllToolStyles()
-	    this.activateToolStyle(this._paintBrushCtrl)
-
-	    this.fPaintTool.setPaintMode()	    
-	    this.setTool(this.fPaintTool)
-	    
-	} else if (e.target.id == this.gPaintEraserId) {
-	    this.deactivateAllToolStyles()
-	    this.activateToolStyle(this._paintEraserCtrl)
-
-	    this.fPaintTool.setEraserMode()
-	    this.setTool(this.fPaintTool)
-	    
-	} else if (e.target.id == this.gSelectId) {
-	    this.deactivateAllToolStyles()
-	    this.activateToolStyle(this._selectCtrl)
-
-	    this.setTool(this.fSelectTool)
-
-	} else if (e.target.id == this.gXformId) {
-	    this.deactivateAllToolStyles()
-	    this.activateToolStyle(this._xformCtrl)
-
-	    this.setTool(this.fXformTool)
-
-	} else if (e.target.id == this.gScissorsId) {
-	    this.deactivateAllToolStyles()
-	    this.activateToolStyle(this._scissorsCtrl)	    
-
-	    this.setTool(this.fScissorsTool)
-
-	} else if (e.target.id == this.gJointId) {
-	    this.deactivateAllToolStyles()
-	    this.activateToolStyle(this._jointCtrl)	    
-
-	    this.setTool(this.fJointTool)
-	    
-	} else if (e.target.id == this.gPaintRectangleId) {
-	    this.deactivateAllToolStyles()
-	    this.activateToolStyle(this._paintRectangleCtrl)
-
-	    this.fAddObjectTool.setRectangleMode()
-	    this.setTool(this.fAddObjectTool)
-	    
-	} else if (e.target.id == this.gPaintCircleId) {
-	    this.deactivateAllToolStyles()
-	    this.activateToolStyle(this._paintCircleCtrl)
-	    
-	    this.fAddObjectTool.setCircleMode()	    	    
-	    this.setTool(this.fAddObjectTool)
-	}
-
-	//this._currentTool.engage()
-	
-	e.stopPropagation()
+	this.deactivateAllToolStyles()
+	this.activateToolStyle(toolButton)
+	this.setTool(tool)	
     }
-    
 }
 
 export default TmarginateToolbar

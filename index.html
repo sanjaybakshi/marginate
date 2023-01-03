@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="styles/paintProject.css">
 
   <link rel="stylesheet" href="styles/mainToolbar.css">
+  <link rel="stylesheet" href="styles/dropToolbar.css">
   <link rel="stylesheet" href="styles/paintToolbar.css">
   <link rel="stylesheet" href="styles/paintMenu.css">
   <link rel="stylesheet" href="styles/objectProperties.css">  
@@ -12,7 +13,8 @@
   <link rel="stylesheet" href="styles/paintCanvas.css">
   <link rel="stylesheet" href="styles/paintTimeslider.css">
   <link rel="stylesheet" href="styles/scissorToolExtra.css">
-  <link rel="stylesheet" href="styles/jointToolExtra.css">      
+  <link rel="stylesheet" href="styles/jointToolExtra.css">
+  <link rel="stylesheet" href="styles/toolExtra.css">      
   
 </head>
 
@@ -34,18 +36,24 @@
       <input class="paint-toolbar-item-image" type="image" src="./icons/Xform.png"      id="xformId">
 
       <input class="paint-toolbar-item-image" type="image" src="./icons/Split.png"      id="scissorsId">      
+<!---
       <input class="paint-toolbar-item-image" type="image" src="./icons/Link.png"       id="jointId">
-
+--->
       
       <input class="paint-toolbar-item-image" type="image" src="./icons/Rectangle.png"  id="paintRectangleId">
       <input class="paint-toolbar-item-image" type="image" src="./icons/Circle.png"     id="paintCircleId">
 
+      
+      <input class="paint-toolbar-item-image" type="image" src="./icons/Link.png"       id="jointTypeBtnId" >    
+      
+      
     </div>
     
     <div class="paint-menu-container"                              id="paintMenuId">
       <input class="paint-menu-item-image" type="image" src="./icons/menu2.png" id="menuButtonId" >    
     </div>
   </div>
+
   
   <!--- Section 2: Canvas -->
   <canvas class="paint-canvas" id="paintCanvasId"></canvas>
@@ -113,7 +121,13 @@
   </div>
 
   
-  
+  <div class="jointType-menu-container" id="jointTypeWndId">
+    <input class="paint-toolbar-item-image" type="image" src="./icons/Link.png" id="motorJointId">    
+    <input class="paint-toolbar-item-image" type="image" src="./icons/A.png"    id="prismaticJointId">
+    <input class="paint-toolbar-item-image" type="image" src="./icons/B.png"    id="distanceJointId">
+    <input class="paint-toolbar-item-image" type="image" src="./icons/C.png"    id="revoluteJointId">    
+  </div>
+
   
 
   <div class="paint-stroke-properties-container" id="paintStrokePropertiesId">
@@ -141,6 +155,11 @@
   <!--- small button that is used by the joint tool. --->
   <div class="joint-container"    id="joint.GoDivId">  
     <button class="joint-btn" id="joint.GoBtnId">Go </button>
+  </div>
+
+  <!--- helpful messages that tools can use to instruct user. --->
+  <div class="tool-info-container"    id="toolInfo.DivId">  
+    <p class="tool-info-txt" id="toolInfo.TxtId"> Place info here. </p>
   </div>
   
 

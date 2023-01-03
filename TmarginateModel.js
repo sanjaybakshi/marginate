@@ -175,30 +175,7 @@ class TmarginateModel {
 
     addJoint(jointDict, updateSelectionList=true)
     {
-	let obj1 = null
-	let obj1Pos = {x:0,y:0}
-	let obj2 = null
-	let obj2Pos = {x:0,y:0}
-
-	if ('obj1' in jointDict) {
-	    obj1 = jointDict.obj1
-	}
-
-	if ('obj1Pos' in jointDict) {
-	    obj1Pos = jointDict.obj1Pos
-	}
-
-	if ('obj2' in jointDict) {
-	    obj2 = jointDict.obj2
-	}
-
-	if ('obj2Pos' in jointDict) {
-	    obj2Pos = jointDict.obj2Pos
-	}
-	
-	let newJoint = fModel.fPlanckWorld.addJoint(obj1, obj1Pos, obj2, obj2Pos,
-						    fModel.getCurrentFrame(),
-						    fModel.getCurrentFrame())
+	let newJoint = fModel.fPlanckWorld.addJoint(jointDict)
 	
 	if (updateSelectionList == true) {
 	    fModel.fSelectionList.replace([newJoint])
@@ -216,7 +193,6 @@ class TmarginateModel {
     {
 	let modelInfo  = mDict.model
 	let planckInfo = mDict.planck
-
 	
 	this.fPlanckWorld.dict2world(planckInfo)	
     }

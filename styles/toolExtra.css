@@ -1,0 +1,21 @@
+
+
+.tool-info-container {
+    display: none;
+    position: absolute;
+}
+
+
+.tool-info-text {
+  background-color: #04AA6D;
+  border: none;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  border-radius: 2px;  
+}
+

@@ -41,7 +41,7 @@ class TmainMenuOptionsWnd extends TpopupWindow
 
 	    let modelDict = JSON.parse(jsonFile)
 
-
+	    fModel.fPlanckWorld.reset()
 	    fModel.dict2Model(modelDict)
 	    
 	    //console.log(worldInfo)
