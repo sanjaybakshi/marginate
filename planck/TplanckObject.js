@@ -12,9 +12,10 @@ class TplanckObject
     _isActive;
     _isDynamic;
     _activateOnCollision;
-
+    
     _body_b2d    
     _sprite;
+    _showSprite;
 
     static eObjectType = {
 	kRectangle : 0,
@@ -109,6 +110,15 @@ class TplanckObject
 	return this._activateOnCollision
     }
 
+    isShowingSprite()
+    {
+	return this._showSprite
+    }
+
+    setShowSprite(v)
+    {
+	this._showSprite = v
+    }
     
     removeFromSimulation()
     {
@@ -184,7 +194,7 @@ class TplanckObject
 	ctx.save()
 
 
-	if (this._sprite != null) {
+	if (this._sprite != null && this._showSprite == true) {
 	    ctx.save()
 	    ctx.translate(pos_pixels.x,pos_pixels.y)
 	    ctx.rotate(-rot)
@@ -361,12 +371,14 @@ class TplanckObject
 	let a  = this._activateOnCollision
 	let ot = this._objType
 	let id = this._uid
+	let ss = this._showSprite
 	
 	let objData = {pos: p, width: w, height: h, start: s,
 		       isDynamic: d,
 		       activateOnCollision: a,
 		       objType: ot,
-		       id: id}
+		       id: id,
+		       showSprite: ss}
 
 	if (this._sprite != null) {
 	    objData.sprite = TimageUtils.img2String(this._sprite)
@@ -382,13 +394,14 @@ class TplanckObject
 	let pos                 = null
 	let width               = null
 	let height              = null
-	let currentFrame        = null
+	let start               = null
 	let objType             = null
 	let isDynamic           = null
 	let activateOnCollision = null
 	let isActive            = null
 	let sprite              = null
-
+	let showSprite          = null
+	
 	if ('pos' in objDict) {
 	    pos = objDict.pos
 	}
@@ -401,8 +414,8 @@ class TplanckObject
 	    height = objDict.height
 	}
 
-	if ('currentFrame' in objDict) {
-	    currentFrame = objDict.currentFrame
+	if ('start' in objDict) {
+	    start = objDict.start
 	}
 
 	if ('objType' in objDict) {
@@ -419,6 +432,10 @@ class TplanckObject
 
 	if ('isActive' in objDict) {
 	    isActive = objDict.isActive
+	}
+
+	if ('showSprite' in objDict) {
+	    showSprite = objDict.showSprite
 	}
 
 	if ('sprite' in objDict) {
@@ -440,8 +457,8 @@ class TplanckObject
 	    if (height == null) {
 		height = 10
 	    }
-	    if (currentFrame == null) {
-		currentFrame = 1
+	    if (start == null) {
+		start = 0
 	    }
 	    if (objType == null) {
 		objType = TplanckObject.eObjectType.kRectangle
@@ -457,6 +474,10 @@ class TplanckObject
 		isActive = true
 	    }
 
+	    if (showSprite == null) {
+		showSprite = true
+	    }
+	    
 	    if (sprite == null) {
 		sprite = null
 	    }
@@ -476,8 +497,8 @@ class TplanckObject
 	    this._heightPixels = height	    
 	}
 
-	if (currentFrame != null) {
-	    this._existanceStart = currentFrame
+	if (start != null) {
+	    this._existanceStart = start
 	}
 
 	if (objType != null) {
@@ -494,6 +515,10 @@ class TplanckObject
 	
 	if (isActive != null) {
 	    this._isActive  = isActive
+	}
+
+	if (showSprite != null) {
+	    this._showSprite = showSprite
 	}
 
 	if (sprite != null) {

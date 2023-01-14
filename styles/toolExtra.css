@@ -3,6 +3,7 @@
 .tool-info-container {
     display: none;
     position: absolute;
+    user-select: none; /* can't be selected. */
 }
 
 

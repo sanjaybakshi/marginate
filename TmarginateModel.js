@@ -20,7 +20,7 @@ class TmarginateModel {
 
 	this.fPauseAnim      = true
 	
-	this.fFrameDimensions = {width:1024,height:512}
+	this.fFrameDimensions = {width:770,height:770}
 
 	this.fFrameImages = []
 
@@ -89,12 +89,13 @@ class TmarginateModel {
 
 	    this.fPlanckWorld.reset()
 	    
-	} else if (this.fCurrentFrame < 0) {
+	} else if (this.fCurrentFrame <= 0) {
 	    this.fCurrentFrame = 0
+
+	    this.fPlanckWorld.reset()	    
 	}
 	
 	this.fPlanckWorld.setFrame(this.fCurrentFrame)	    
-
 	this.fFrameChangeEvent.trigger(this.fCurrentFrame)
     }
 
@@ -118,7 +119,7 @@ class TmarginateModel {
 	    this.fPlanckWorld.step()
 	}
 	this.fCurrentFrame = f
-	this.fFrameChangeEvent.trigger(this.fCurrentFrame)	
+	this.fFrameChangeEvent.trigger(this.fCurrentFrame)
     }
     
     
@@ -147,12 +148,16 @@ class TmarginateModel {
 	return this.fTotalNumFrames
     }
 
-    addObject(objDict, updateSelectionList=true)
+    addObject(objDict, updateSelectionList=true, updateFrame=true)
     {
 	let newObj = fModel.fPlanckWorld.addObject(objDict)
 
 	if (updateSelectionList == true) {
 	    fModel.fSelectionList.replace([newObj])
+	}
+
+	if (updateFrame == true) {
+	    this.setFrame(this.fCurrentFrame)
 	}
 	return newObj
     }
@@ -161,25 +166,43 @@ class TmarginateModel {
     {
 	let newObjects = []
 	for (const objDict of objDictList) {
-	    let newOne = this.addObject(objDict, false)
+	    let newOne = this.addObject(objDict, false, false)
 	    newObjects.push(newOne)
 	}
-	fModel.fSelectionList.replace(newObjects)	
+	fModel.fSelectionList.replace(newObjects)
+	this.setFrame(this.fCurrentFrame)	
     }
     
-    removeObject(obj)
+    removeObject(obj, updateFrame=true)
     {
 	fModel.fSelectionList.remove(obj)	
+
 	fModel.fPlanckWorld.removeObject(obj)
+
+	if (updateFrame == true) {
+	    this.setFrame(this.fCurrentFrame)
+	}
     }
 
+    removeSelectedObjects()
+    {
+	let sList = fModel.fSelectionList._sList
+	for (const s of sList) {
+	    this.removeObject(s, false)
+	}
+	
+	this.setFrame(this.fCurrentFrame)
+    }
+    
     addJoint(jointDict, updateSelectionList=true)
     {
-	let newJoint = fModel.fPlanckWorld.addJoint(jointDict)
+	let newJoint = fModel.fPlanckWorld.addJoint(jointDict, false)
 	
 	if (updateSelectionList == true) {
 	    fModel.fSelectionList.replace([newJoint])
 	}
+
+	this.setFrame(this.fCurrentFrame)
 	
 	return newJoint
     }
@@ -187,6 +210,7 @@ class TmarginateModel {
     editObject(obj, objDict)
     {	
 	fModel.fPlanckWorld.editObject(obj, objDict)
+	this.setFrame(this.fCurrentFrame)	
     }
 
     dict2Model(mDict)
@@ -194,7 +218,9 @@ class TmarginateModel {
 	let modelInfo  = mDict.model
 	let planckInfo = mDict.planck
 	
-	this.fPlanckWorld.dict2world(planckInfo)	
+	this.fPlanckWorld.dict2world(planckInfo)
+
+	this.setFrame(this.fCurrentFrame)
     }
 
     model2Dict()

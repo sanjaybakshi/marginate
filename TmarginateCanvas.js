@@ -51,6 +51,14 @@ class TmarginateCanvas extends Tcanvas
 	//
 	document.onpaste = this.onPaste.bind(this)
 
+	// Handle keystrokes.
+	//
+	window.addEventListener('keydown', (e) => {
+	//this._div.addEventListener('keydown', (e) => {	    
+	    this.onKeyPress(e);
+	});
+
+	
 	this.fMousePosition = null
 
 	this.fLastFrameImage = null
@@ -196,6 +204,13 @@ class TmarginateCanvas extends Tcanvas
 			  sprite:  pastedImage})
 	console.log("paste")
 	
+    }
+
+    onKeyPress(e)
+    {
+	if (e.key === "Backspace" || e.key === "Delete") {
+	    fModel.removeSelectedObjects()
+        }
     }
 }
 

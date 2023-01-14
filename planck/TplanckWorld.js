@@ -39,8 +39,6 @@ class TplanckWorld
 	    fWorldHeight = 10
 	    fWorldWidth  = fWorldHeight * (fCanvasWidth/fCanvasHeight)
 	}
-
-	this.fCounter = 0
     }
 
 
@@ -138,10 +136,7 @@ class TplanckWorld
 
     generateUID()
     {
-	let uid = this.fCounter
-	this.fCounter = this.fCounter + 1
-
-	return uid
+	return new Date().getTime();
     }
 
     
@@ -157,8 +152,6 @@ class TplanckWorld
 
 	this._fObjectList.push(obj)
 
-	obj.addToSimulation(this._fWorld)
-
 	return obj
     }
 
@@ -170,6 +163,24 @@ class TplanckWorld
     removeObject(b)
     {
 	b.removeFromSimulation()
+
+	// See if any joints include this object.
+	//
+	let jointsToRemove = []
+	for (const j of this._fJointList) {
+	    if (j._obj1 == b || j._obj2 == b) {
+
+		jointsToRemove.push(j)
+	    }
+	}
+
+	// Delete the joints from the list.
+	//
+	for (const j of jointsToRemove) {
+	    j.removeFromSimulation()
+	    this._fJointList = this._fJointList.filter(jnt => jnt != j);
+	}
+
 
 	// Delete the object from the list.
 	//
@@ -217,7 +228,6 @@ class TplanckWorld
 	
 	let joint = new TplanckJoint(jointDict, uid)
 	this._fJointList.push(joint)
-	joint.addToSimulation(this._fWorld)
 
 	return joint	
     }

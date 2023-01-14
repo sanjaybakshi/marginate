@@ -60,10 +60,6 @@ class TselectTool extends Ttool
 	    let selObjs = fModel.fPlanckWorld.intersectRect(this.fCurrentRect)
 
 	    fModel.fSelectionList.replace(selObjs)
-	    
-	    console.log(selObjs)
-
-	    
 	}    
 	this._selectionStarted = false
 	this.fCurrectRect = {top: 0, left: 0, width: 0, height: 0}

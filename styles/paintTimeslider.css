@@ -11,9 +11,10 @@
     grid-template-columns: 1fr minmax(75%,80%) 1fr;
     background-color: whitesmoke;
     //background-color: black;
-    height: 10%;
+    height: 7%;
     //border-style: solid;
 
+    user-select: none; /* can't be selected. */
 
 }
 
@@ -28,6 +29,8 @@
     width: 35px;
     height: 35px;
     object-fit: contain;
+    user-select: none; /* can't be selected. */
+
 }
 
 .PlaySlider {

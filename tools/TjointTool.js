@@ -33,26 +33,15 @@ class TjointTool extends Ttool
 	this._circleManipColor    = 'blue'
 	this._selCircleManipColor = 'red'
 
-
-	this._obj1                   = null
-	this._objPt1                 = {x:100,y:90}
-	this._anchorPt1              = {x:100,y:130}
-	this._move_objPt1_started    = false
-	this._move_anchorPt1_started = false	
-
-	this._obj2                   = null
-	this._objPt2                 = {x:200,y:90}
-	this._anchorPt2              = {x:200,y:130}
-	this._move_objPt2_started    = false
-	this._move_anchorPt2_started = false
-
 	this._wheel   = null
 	this._body    = null
 	this._wheelPt = null
 	this._bodyPt  = null
 	
-	this._strokeStarted = false
-
+	this._strokeStarted          = false
+	this._moveWheelPivot_started = false
+	this._moveBodyPivot_started  = false	
+	
 	this._jointType = TplanckJoint.eJointType.kMotor
     }
 
@@ -63,15 +52,15 @@ class TjointTool extends Ttool
 
     setPrismaticMode()
     {
-	this._jointType = TplanckJoint.eJointType.kMotor	
+	this._jointType = TplanckJoint.eJointType.kPrismatic	
     }
     setDistanceMode()
     {
-	this._jointType = TplanckJoint.eJointType.kMotor	
+	this._jointType = TplanckJoint.eJointType.kDistance	
     }
     setRevoluteMode()
     {
-	this._jointType = TplanckJoint.eJointType.kMotor	
+	this._jointType = TplanckJoint.eJointType.kRevolute	
     }
      
     
@@ -86,42 +75,18 @@ class TjointTool extends Ttool
 
 	this.fJointGoDiv.hide()
 
-	if (TdrawUtils.isInsideCircle({x:x, y:y},
-				      this._objPt1,
-				      this._circleManipSize)) {
-	    this._move_objPt1_started    = true
-	    this._move_objPt2_started    = false
-	    this._move_anchorPt1_started = false
-	    this._move_anchorPt2_started = false	    	    
-	} else if (TdrawUtils.isInsideCircle({x:x, y:y},
-					     this._objPt2,
-					     this._circleManipSize)) {
-	    this._move_objPt1_started    = false
-	    this._move_objPt2_started    = true
-	    this._move_anchorPt1_started = false
-	    this._move_anchorPt2_started = false	    	    
-	} else if (TdrawUtils.isInsideCircle({x:x, y:y},
-					     this._anchorPt1,
-					     this._circleManipSize)) {
-	    this._move_objPt1_started    = false
-	    this._move_objPt2_started    = false
-	    this._move_anchorPt1_started = true
-	    this._move_anchorPt2_started = false
-	}  else if (TdrawUtils.isInsideCircle({x:x, y:y},
-					     this._anchorPt2,
-					     this._circleManipSize)) {
-	    this._move_objPt1_started    = false
-	    this._move_objPt2_started    = false
-	    this._move_anchorPt1_started = false
-	    this._move_anchorPt2_started = true
+	if (this._wheel != null && this._body!= null) {
+	    if (TdrawUtils.isInsideCircle({x:x, y:y},
+					  this._wheelPt,
+					  this._circleManipSize)) {
+		this._moveWheelPivot_started    = true
+	    } else if (TdrawUtils.isInsideCircle({x:x, y:y},
+					  this._bodyPt,
+					  this._circleManipSize)) {
+		this._moveBodyPivot_started    = true
+	    }
 	} else {
-	    this._move_objPt1_started    = false
-	    this._move_objPt2_started    = false
-	    this._move_anchorPt1_started = false
-	    this._move_anchorPt2_started = false
-
-	    this._obj1                   = null
-	    this._obj2                   = null
+	    this._moveWheelPivot_started = false
 
 	    // Draw a stroke to make the connection.
 	    //
@@ -146,18 +111,13 @@ class TjointTool extends Ttool
 	let pointerInfo = Tpointer.getPointer(e)	    
 	let x = pointerInfo.x
 	let y = pointerInfo.y
-	
-	if (this._move_objPt1_started) {
-	    this._objPt1 = {x:x,y:y}	    
-	} else if (this._move_objPt2_started) {
-	    this._objPt2 = {x:x,y:y}
-	} else if (this._move_anchorPt1_started) {
-	    this._anchorPt1 = {x:x,y:y}
-	} else if (this._move_anchorPt2_started) {
-	    this._anchorPt2 = {x:x,y:y}
-	}
 
-	if (this._strokeStarted) {
+
+	if (this._moveWheelPivot_started) {
+	    this._wheelPt = {x:x,y:y}
+	} else if (this._moveBodyPivot_started) {
+	    this._bodyPt = {x:x,y:y}	    
+	} else if (this._strokeStarted) {
 
 	    // Check to see if the stroke ends up in a valid body.
 	    //
@@ -178,85 +138,25 @@ class TjointTool extends Ttool
     {
 	super.pointerUp(e)
 
-	this._move_objPt1_started    = false
-	this._move_objPt2_started    = false
-	this._move_anchorPt1_started = false
-	this._move_anchorPt2_started = false
+	this._moveWheelPivot_started = false
+	this._moveBodyPivot_started  = false
+	this._strokeStarted          = false
 
-	if (this.canDrawGoButton()) {
+	if (this._wheel != null && this._body != null) {
 	    this.drawGoButton()
-	} else {
-	    this.fJointGoDiv.hide()
-	}
-
-	if (this._strokeStarted == true) {
-	    this._strokeStarted = false
-
-	    if (this._wheel != null && this._body != null) {
-		this.drawNewGoButton()
-	    }
-
-	}
+	}	
     }
 
     draw(ctx)
     {
 	super.draw(ctx)
 
+
+	
 	let p1_Color = this._circleManipColor
 	let p2_Color = this._circleManipColor
 
 	ctx.save()
-
-	// Draw the ui for building a joint.
-	//
-	TdrawUtils.drawCircle(ctx, this._objPt1,
-			      this._circleManipSize,
-			      p1_Color,
-			      "black", 1)
-
-	TdrawUtils.drawCircle(ctx, this._anchorPt1,
-			      this._circleManipSize,
-			      p1_Color,
-			      "black", 1)
-
-	ctx.beginPath()
-	ctx.lineWidth = 2
-	ctx.strokeStyle = 'purple'
-	    
-	ctx.moveTo(this._objPt1.x, this._objPt1.y)
-	ctx.lineTo(this._anchorPt1.x, this._anchorPt1.y)
-	ctx.stroke()
-
-	
-	TdrawUtils.drawCircle(ctx, this._objPt2,
-			      this._circleManipSize,
-			      p2_Color,
-			      "black", 1)
-
-	TdrawUtils.drawCircle(ctx, this._anchorPt2,
-			      this._circleManipSize,
-			      p2_Color,
-			      "black", 1)
-
-	ctx.beginPath()
-	ctx.lineWidth = 2
-	ctx.strokeStyle = 'purple'
-	    
-	ctx.moveTo(this._objPt2.x, this._objPt2.y)
-	ctx.lineTo(this._anchorPt2.x, this._anchorPt2.y)
-	ctx.stroke()
-
-
-	ctx.beginPath()
-	ctx.lineWidth = 2
-	ctx.setLineDash([5,5])
-	ctx.strokeStyle = 'purple'
-	    
-	ctx.moveTo(this._anchorPt1.x, this._anchorPt1.y)
-	ctx.lineTo(this._anchorPt2.x, this._anchorPt2.y)
-	ctx.stroke()
-
 
 	// Draw the joint as a stroke...
 	if (this._wheelPt != null &&
@@ -275,7 +175,23 @@ class TjointTool extends Ttool
 	    ctx.lineTo(this._bodyPt.x, this._bodyPt.y)
 	    ctx.stroke()
 	}
-	
+
+	// Draw the pivot points.
+	//
+	if (this._wheel != null && this._body != null) {
+	    // Draw the pivot point.
+	    //
+	    TdrawUtils.drawCircle(ctx, this._wheelPt,
+				  this._circleManipSize,
+				  p1_Color,
+				  "black", 1)
+	    TdrawUtils.drawCircle(ctx, this._bodyPt,
+				  this._circleManipSize,
+				  p1_Color,
+				  "black", 1)
+	}
+	    
+	    
 	ctx.restore()
     }
 
@@ -291,80 +207,36 @@ class TjointTool extends Ttool
     {
 	super.engage()
 
-	
-	this._obj1                   = null
-	//this._objPt1                 = {x:100,y:90}
-	//this._anchorPt1              = {x:100,y:130}
-	this._move_objPt1_started    = false
-	this._move_anchorPt1_started = false	
-
-	this._obj2                   = null
-	//this._objPt2                 = {x:200,y:90}
-	//this._anchorPt2              = {x:200,y:130}
-	this._move_objPt2_started    = false
-	this._move_anchorPt2_started = false	
-
-	if (this.canDrawGoButton()) {
-	    this.drawGoButton()
-	} else {
-	    this.fJointGoDiv.hide()
-	}	
-
-
+	this._wheel   = null
+	this._body    = null
+	this._wheelPt = null
+	this._bodyPt  = null
+	this._moveWheelPivot_started = false
+	this._moveBodyPivot_started  = false
 
 	// Draw helpful message.
 	//
-	/*
-	let boundRect = Trect.constructFromPoints([this._anchorPt1, this._anchorPt2])
-	let pos_wnd = this.fCanvas.canvasCoordsToWindow( {x: boundRect._x2,
-	y: boundRect._y2 + 20} )
-	*/
 
-	this.fToolInfoTxt._div.innerHTML = "Draw a stroke from the wheel to the body."
-	this.fToolInfoDiv.showAt({x:200,y:200})
-	
-    }
-
-    canDrawGoButton()
-    {
-	this._obj1 = null
-	this._obj2 = null
-	
-	let r = {left: this._objPt1.x, top: this._objPt1.y, width: 1, height: 1}	
-	let objs = fModel.fPlanckWorld.intersectRect(r)
-	if (objs.length > 0) {
-	    this._obj1 = objs[0]
+	if (this._jointType == TplanckJoint.eJointType.kMotor) {
+	    this.fToolInfoTxt._div.innerHTML = "Motor Joint: Draw a stroke from the wheel to the body."
+	} else if (this._jointType == TplanckJoint.eJointType.kDistance) {
+	    this.fToolInfoTxt._div.innerHTML = "Distance Joint: Draw a stroke from A to B."
 	}
 
-	r = {left: this._objPt2.x, top: this._objPt2.y, width: 1, height: 1}
-	objs = fModel.fPlanckWorld.intersectRect(r)
-	if (objs.length > 0) {
-	    this._obj2 = objs[0]
-	}
-
-	if (this._obj1 != null && this._obj2 != null) {
-	    return true
-	}
-
-	if (this._wheel != null && this._body != null) {
-	    return true
-	}
-	return false	
-    }
-    
-    drawGoButton()
-    {
-	// make a rect from the 2 points and position the go button
-	// in the lower right.
+	// calculate middle.
 	//
-	let boundRect = Trect.constructFromPoints([this._anchorPt1, this._anchorPt2])
-	let pos_wnd = this.fCanvas.canvasCoordsToWindow( {x: boundRect._x2,
-							  y: boundRect._y2 + 20} )
+	this.fToolInfoDiv.show()
+	let boundRect = this.fToolInfoDiv.getWidthHeight()
+	let canvasRect = this.fCanvas.getWidthHeight()
+
+	let xCoord = canvasRect.width/2 - boundRect.width/2
+	let yCoord = 5
+	let pos_wnd = this.fCanvas.canvasCoordsToWindow( {x: xCoord, y: yCoord} )
+	this.fToolInfoDiv.showAt(pos_wnd)
 	
-	this.fJointGoDiv.showAt(pos_wnd)
     }
 
-    drawNewGoButton()
+    drawGoButton()
     {
 	// Draw it to the right of the wheel.
 	//
@@ -385,29 +257,16 @@ class TjointTool extends Ttool
     makeJoint()
     {
 	let newJointInfo = {}
-	//
-	//
 
-	if (this._obj1 != null && this._obj2 != null) {
-	    newJointInfo.obj1    = this._obj1
-	    newJointInfo.obj1Pos = this._anchorPt1
+	newJointInfo.jointType = this._jointType
+	newJointInfo.obj1      = this._body
+	newJointInfo.obj1Pos   = this._bodyPt
 	    
-	    newJointInfo.obj2    = this._obj2
-	    newJointInfo.obj2Pos = this._anchorPt2
+	newJointInfo.obj2      = this._wheel
+	newJointInfo.obj2Pos   = this._wheelPt
 
-	    newJointInfo.jointType = this._jointType
-	    fModel.addJoint(newJointInfo)
-	} else {
-	    newJointInfo.obj1    = this._body
-	    newJointInfo.obj1Pos = this._wheelPt
-	    
-	    newJointInfo.obj2    = this._wheel
-	    newJointInfo.obj2Pos = this._wheelPt
+	fModel.addJoint(newJointInfo)
 
-	    newJointInfo.jointType = this._jointType	    
-	    fModel.addJoint(newJointInfo)
-
-	}
 	this.engage()
     }
 

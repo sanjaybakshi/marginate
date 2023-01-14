@@ -42,22 +42,18 @@ class TplanckJoint
     
     addToSimulation(world)
     {
-	if (this._objType == TplanckJoint.eJointType.kMotor) {
-	    
-	} else if (this._objType == TplanckJoint.eJointType.kPrismatic) {
-	    
-	} else if (this._objType == TplanckJoint.eJointType.kDistance) {
-	    
-	} else if (this._objType == TplanckJoint.eJointType.kRevolute) {
-	    
-	}
-	    
-	//let j = this.makeDistanceJoint(world)
-	let j = this.makeMotorJoint(world)
-	//let j = this.makeRevoluteJoint(world)
-	this._joint_b2d = j
+	let j = null
 
-	
+	if (this._jointType == TplanckJoint.eJointType.kMotor) {
+	    j = this.makeMotorJoint(world)
+	} else if (this._jointType == TplanckJoint.eJointType.kPrismatic) {
+	    j = this.makeDistanceJoint(world)	    	    	    
+	} else if (this._jointType == TplanckJoint.eJointType.kDistance) {
+	    j = this.makeDistanceJoint(world)	    	    
+	} else if (this._jointType == TplanckJoint.eJointType.kRevolute) {
+	    j = this.makeRevoluteJoint(world)	    	    
+	}
+	this._joint_b2d = j
     }
 
     makeDistanceJoint(world)
@@ -69,7 +65,7 @@ class TplanckJoint
 	worldAnchorOnB = TplanckWorld.pixels2world_vec(worldAnchorOnB)
 
 	let j = world.createJoint(planck.DistanceJoint({
-	    collideConnected: false,
+	    collideConnected: true,
 	}, this._obj1._body_b2d, this._obj2._body_b2d, worldAnchorOnA, worldAnchorOnB))
 //	let j = world.createJoint(planck.RevoluteJoint({
 //	    collideConnected: false,
@@ -128,10 +124,13 @@ class TplanckJoint
     
     draw(ctx, paused, annotated=false)
     {
-	var p1 = TplanckWorld.world2pixels_vec(this._joint_b2d.getBodyA().getPosition())
-	var p2 = TplanckWorld.world2pixels_vec(this._joint_b2d.getBodyB().getPosition())
+	//var p1 = TplanckWorld.world2pixels_vec(this._joint_b2d.getBodyA().getPosition())
+	//var p2 = TplanckWorld.world2pixels_vec(this._joint_b2d.getBodyB().getPosition())
 
 	var a1 = TplanckWorld.world2pixels_vec(this._joint_b2d.getAnchorA())
+	if (this._jointType == TplanckJoint.eJointType.kMotor) {
+	    a1 = TplanckWorld.world2pixels_vec(this._joint_b2d.getBodyA().getPosition())	    
+	}
 	var a2 = TplanckWorld.world2pixels_vec(this._joint_b2d.getAnchorB())	    
 
 	ctx.save()
@@ -141,11 +140,14 @@ class TplanckJoint
 	ctx.strokeStyle = 'grey';	    
 	
 	ctx.beginPath();
-	ctx.moveTo(p1.x, p1.y)
-	ctx.lineTo(a1.x, a2.y)
+	//ctx.moveTo(p1.x, p1.y)
+	//ctx.lineTo(a1.x, a1.y)
 
+	//ctx.lineTo(a2.x, a2.y)
+	//ctx.lineTo(p2.x, p2.y)
+
+	ctx.moveTo(a1.x, a1.y)
 	ctx.lineTo(a2.x, a2.y)
-	ctx.lineTo(p2.x, p2.y)
 	
 	ctx.stroke();
 
@@ -154,6 +156,8 @@ class TplanckJoint
 
     joint2dict()
     {
+	let jType = this._jointType
+	
 	let o1id = this._obj1._uid
 	let o2id = this._obj2._uid
 	
@@ -164,17 +168,23 @@ class TplanckJoint
 
 	let id    = this._uid
 	
-	let jointData = {obj1: o1id, obj2: o2id, obj1Pos: o1Pos, obj2Pos: o2Pos, start: start, id: id}
+	let jointData = {jointType: jType, obj1: o1id, obj2: o2id, obj1Pos: o1Pos, obj2Pos: o2Pos, start: start, id: id}
 	return jointData
     }
 
     dict2joint(jointDict, useDefaults=true)
     {
-	let obj1                = null
-	let obj1Pos             = null
-	let obj2                = null
-	let obj2Pos             = null
-	let currentFrame        = null
+	let jType   = null
+	let obj1    = null
+	let obj1Pos = null
+	let obj2    = null
+	let obj2Pos = null
+	let start   = null
+
+	
+	if ('jointType' in jointDict) {
+	    jType = jointDict.jointType
+	}
 	
 	if ('obj1' in jointDict) {
 	    obj1 = jointDict.obj1
@@ -192,11 +202,14 @@ class TplanckJoint
 	    obj2Pos = jointDict.obj2Pos
 	}
 
-	if ('currentFrame' in jointDict) {
-	    currentFrame = jointDict.currentFrame
+	if ('start' in jointDict) {
+	    start = jointDict.start
 	}
 	
 	if (useDefaults == true) {
+	    if (jType == null) {
+		jType = TplanckJoint.eJointType.kDistance	
+	    }
 	    if (obj1 == null) {
 		obj1 = null
 	    }
@@ -209,12 +222,16 @@ class TplanckJoint
 	    if (obj2Pos == null) {
 		obj2Pos = {x:0,y:0}
 	    }
-	    if (currentFrame == null) {
-		currentFrame = 1
+	    if (start == null) {
+		start = 0
 	    }
 	    
 	}
 
+	if (jType != null) {
+	    this._jointType = jType
+	}
+	
 	if (obj1 != null) {
 	    this._obj1 = obj1
 	}
@@ -227,8 +244,8 @@ class TplanckJoint
 	if (obj2Pos != null) {
 	    this._obj2Pos = obj2Pos
 	}
-	if (currentFrame != null) {
-	    this._existanceStart = currentFrame
+	if (start != null) {
+	    this._existanceStart = start
 	}
     }
 

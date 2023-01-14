@@ -1,6 +1,7 @@
 import TpropertiesPanel from "./libs/TpropertiesPanel.js"
 import Tslider          from "./libs/Tslider.js"
 import TcheckBox        from "./libs/TcheckBox.js"
+import TnumberField     from "./libs/TnumberField.js"
 
 
 import { fModel } from './TmarginateModel.js'
@@ -32,6 +33,28 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 							  this.activateOnCollisionChanged)
 
 
+	this.gPositionXId = "number.posX"
+	this.gPositionYId = "number.posY"	
+
+	this._positionXfield = new TnumberField(this.gPositionXId,
+						this.positionChanged.bind(this))
+	this._positionYfield = new TnumberField(this.gPositionYId,
+						this.positionChanged.bind(this))
+
+	this.gWidthId  = "number.width"
+	this.gHeightId = "number.height"	
+
+	this._widthField = new TnumberField(this.gWidthId,
+					    this.widthChanged.bind(this))
+	this._heightField = new TnumberField(this.gHeightId,
+					     this.heightChanged.bind(this))
+
+
+	this.gShowSpriteCheckboxId  = "checkbox.showSpriteId"	
+	
+	this._showSpriteCheckBox = new TcheckBox(this.gShowSpriteCheckboxId,
+						 this.showSpriteChanged.bind(this))
+	
 	
 	fModel.fSelectionList.fSelectionChangeEvent.addListener(data => {
 	    this.selectionChange(data)
@@ -41,6 +64,13 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 	this._dynamicCheckBox.disable()
 	this._activateOnCollisionCheckBox.disable()		
 	this._massSlider.disable()
+
+	this._positionXfield.disable()
+	this._positionYfield.disable()	
+	this._widthField.disable()
+	this._heightField.disable()
+
+	this._showSpriteCheckBox.disable()	
     }
 
     massChanged(v)
@@ -86,6 +116,46 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 	}	
     }
 
+    positionChanged(v)
+    {
+	let sList = fModel.fSelectionList._sList
+	for (const sObj of sList) {
+	    sObj.setPosition()
+	}
+	
+	this.updateUI()
+    }
+
+    widthChanged(v)
+    {
+	let d = {}
+	let sList = fModel.fSelectionList._sList
+	for (const sObj of sList) {
+	    fModel.editObject(sObj, {width: v})
+	}	
+	this.updateUI()
+    }
+    heightChanged(v)
+    {
+	let d = {}
+	let sList = fModel.fSelectionList._sList
+	for (const sObj of sList) {
+	    fModel.editObject(sObj, {height: v})
+	}	
+	this.updateUI()
+    }
+
+    showSpriteChanged(v)
+    {
+	let sList = fModel.fSelectionList._sList
+	for (const sObj of sList) {
+	    
+	    sObj.setShowSprite(v)
+	}
+	
+	this.updateUI()
+    }
+    
     updateUI()
     {
 	let sList = fModel.fSelectionList._sList
@@ -98,6 +168,13 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 	    this._activateOnCollisionCheckBox.disable()		
 
 	    this._massSlider.disable()
+
+	    this._positionXfield.disable()
+	    this._positionYfield.disable()	    
+	    this._widthField.disable()
+	    this._heightField.disable()
+
+	    this._showSpriteCheckBox.disable()
 	    
 	} else {
 	    this._activeCheckBox.enable()	    
@@ -105,10 +182,17 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 	    this._activateOnCollisionCheckBox.enable()		
 	    this._massSlider.enable()
 
+	    this._positionXfield.enable()
+	    this._positionYfield.enable()	    
+	    this._widthField.enable()
+	    this._heightField.enable()	    
+	    this._showSpriteCheckBox.enable()
+	    
 	    let allActive               = true
 	    let allDynamic              = true
 	    let allActivateOnCollision  = true
-
+	    let allShowSprite           = true
+	    
 	    for (const sObj of sList) {
 
 		if (sObj.constructor.name == "TplanckObject") {
@@ -123,13 +207,20 @@ class TmarginatePropertiesPanel extends TpropertiesPanel
 		    if (sObj.isActivatedOnCollision() != true) {
 			allActivateOnCollision = false
 		    }
+
+		    if (sObj.isShowingSprite() != true) {
+			allShowSprite = false
+		    }
+		    this._widthField.setValue(sObj.widthInPixels())
+		    this._heightField.setValue(sObj.heightInPixels())
 		}
 	    }
 
 	    this._activeCheckBox.setValue(allActive)	    
 	    this._dynamicCheckBox.setValue(allDynamic)
 	    this._activateOnCollisionCheckBox.setValue(allActivateOnCollision)
-
+	    this._showSpriteCheckBox.setValue(allShowSprite)
+	    
 	    if (allDynamic == false) {
 		// All are static so disable activateOnCollision.
 		//

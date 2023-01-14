@@ -1,0 +1,37 @@
+@import './vars.css';
+
+.numbers-doubleVal-container {
+    width: 200px;
+
+    
+/*    display: grid;
+    
+    grid-template-columns: 100%;*/
+/*    background-color:      yellow;  */
+}
+
+
+.numbers-label {
+    /*
+  background-color: lightblue;
+  border: 1px solid black;
+*/
+  align-self: start;
+}
+
+.numbers-value {
+    width: 50px;
+}
+
+
+.numbers-doubleVal-label {
+    flex-basis: 50px;
+}
+
+.slider-range {
+    flex-grow: 1;
+}
+
+.slider-number {
+    flex-basis: 50px;
+}

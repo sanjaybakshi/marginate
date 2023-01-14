@@ -8,7 +8,8 @@
   <link rel="stylesheet" href="styles/dropToolbar.css">
   <link rel="stylesheet" href="styles/paintToolbar.css">
   <link rel="stylesheet" href="styles/paintMenu.css">
-  <link rel="stylesheet" href="styles/objectProperties.css">  
+  <link rel="stylesheet" href="styles/objectProperties.css">
+  <link rel="stylesheet" href="styles/numbers.css">  
   <link rel="stylesheet" href="styles/paintStrokePropertiesWnd.css">
   <link rel="stylesheet" href="styles/paintCanvas.css">
   <link rel="stylesheet" href="styles/paintTimeslider.css">
@@ -19,8 +20,8 @@
 </head>
 
 <body>
-
-
+  
+  
   <!--- Section 1: Toolbar -->
   <div class="main-toolbar-container">
     <div class="paint-toolbar-container"                                                id="paintToolbarId">    
@@ -28,22 +29,18 @@
       <input class="paint-toolbar-item-image" type="image" src="./icons/LineWidth2.png" id="paintStrokeId">    
       
       <div class="paint-toolbar-item-seperator"> </div>
-
+      
       <input class="paint-toolbar-item-image" type="image" src="./icons/Pencil.png"     id="paintBrushId">      
       <input class="paint-toolbar-item-image" type="image" src="./icons/Eraser.png"     id="paintEraserId">
-
+      
       <input class="paint-toolbar-item-image" type="image" src="./icons/Select.png"     id="selectId">
       <input class="paint-toolbar-item-image" type="image" src="./icons/Xform.png"      id="xformId">
-
-      <input class="paint-toolbar-item-image" type="image" src="./icons/Split.png"      id="scissorsId">      
-<!---
-      <input class="paint-toolbar-item-image" type="image" src="./icons/Link.png"       id="jointId">
---->
       
+      <input class="paint-toolbar-item-image" type="image" src="./icons/Split.png"      id="scissorsId">      
       <input class="paint-toolbar-item-image" type="image" src="./icons/Rectangle.png"  id="paintRectangleId">
       <input class="paint-toolbar-item-image" type="image" src="./icons/Circle.png"     id="paintCircleId">
-
-      
+    
+    
       <input class="paint-toolbar-item-image" type="image" src="./icons/Link.png"       id="jointTypeBtnId" >    
       
       
@@ -53,30 +50,14 @@
       <input class="paint-menu-item-image" type="image" src="./icons/menu2.png" id="menuButtonId" >    
     </div>
   </div>
-
+  
   
   <!--- Section 2: Canvas -->
   <canvas class="paint-canvas" id="paintCanvasId"></canvas>
 
-
-  
-  <!--- Section 3: Properties Panel -->
-
-  <!---  <div class="flexbox-container" id="objectPropertiesId"> 
-
-  <div class="op-container" id="objectPropertiesId">     
-    <div class="flexbox-container">    
-      <div class="flexbox-item flexbox-item-1"></div>
-      <div class="flexbox-item flexbox-item-2"></div>
-      <div class="flexbox-item flexbox-item-3"></div>
-    </div>
-  </div>
-  
---->
-
-
   <div class="object-properties-container" id="objectPropertiesId">
 
+      
     <div class="object-properties-item">
       <input type="checkbox" id="checkbox.activeId" name="active" checked>
       <label for="checkbox.activeId">Active</label>
@@ -96,7 +77,34 @@
       <p class="slider-label">Mass</p>
       <input class="slider-range" type="range"  min="0" max="100" value="100" data-color="#f00" id="slider.massId">
       <input class="slider-number" type="number" min="0" max="100" value="100"                   id="number.massId">
-    </div>    
+    </div>
+
+
+
+    <div class="numbers-doubleVal-container">
+      <p class="numbers-item" id="pos.labelId"> Position </p>
+
+      <label class="numbers-label" for="posX">x:</label> 
+      <input class="numbers-value" type="text" id="number.posX">
+      <label class="numbers-label" for="posY">y:</label> 
+      <input class="numbers-value" type="text" id="number.posY">
+    </div>
+
+    
+    <div class="numbers-doubleVal-container">
+      <p class="numbers-item" id="size.labelId"> Size </p>
+
+      <label class="numbers-label" for="width">x:</label> 
+      <input class="numbers-value" type="number" id="number.width">
+      <label class="numbers-label" for="height">y:</label> 
+      <input class="numbers-value" type="number" id="number.height">
+    </div>
+    
+    <div class="object-properties-item">
+      <input type="checkbox" id="checkbox.showSpriteId" name="showSprite" checked>
+      <label for="checkbox.showSpriteId">Show Sprite</label>
+    </div>
+    
   </div>
 
 
@@ -145,6 +153,8 @@
     </div>
 
   </div>
+
+
 
 
   <!--- small button that is used by the scissors tool. --->
