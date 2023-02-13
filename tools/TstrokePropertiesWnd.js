@@ -12,10 +12,12 @@ class TstrokePropertiesWnd extends TpopupWindow
 	super(windowId)
 
 	this.gStrokeColorId         = "paintColorId"
-	
+
+	this.gSliderStrokeSizeParentId    = "slider.parentStrokeSizeId"	
 	this.gSliderStrokeSizeId    = "slider.strokeSizeId"
 	this.gNumberStrokeSizeId    = "number.strokeSizeId"
 
+	this.gSliderStrokeOpacityParentId    = "slider.parentStrokeOpacityId"		
 	this.gSliderStrokeOpacityId = "slider.strokeOpacityId"
 	this.gNumberStrokeOpacityId = "number.strokeOpacityId"
 	
@@ -25,11 +27,13 @@ class TstrokePropertiesWnd extends TpopupWindow
 	    this.strokeColorChanged(e)
 	});
 					       
-	this._strokeSizeSlider = new Tslider(this.gSliderStrokeSizeId,
+	this._strokeSizeSlider = new Tslider(this.gSliderStrokeSizeParentId,
+					     this.gSliderStrokeSizeId,
 					     this.gNumberStrokeSizeId,
 					     this.strokeSizeChanged)
 
-	this._strokeOpacitySlider = new Tslider(this.gSliderStrokeOpacityId,
+	this._strokeOpacitySlider = new Tslider(this.gSliderStrokeOpacityParentId,
+						this.gSliderStrokeOpacityId,
 						this.gNumberStrokeOpacityId,
 						this.strokeOpacityChanged)
 

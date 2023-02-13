@@ -93,7 +93,7 @@ class TjointTool extends Ttool
 	    
 	    // Check to see if the stroke was started inside a wheel.
 	    //
-	    let r = {left: pointerInfo.x, top: pointerInfo.y, width: 1, height: 1}	
+	    let r = Trect.constructFromInfo(pointerInfo, 1, 1)
 	    let objs = fModel.fPlanckWorld.intersectRect(r)
 	    if (objs.length > 0) {
 		this._wheel = objs[0]
@@ -121,7 +121,8 @@ class TjointTool extends Ttool
 
 	    // Check to see if the stroke ends up in a valid body.
 	    //
-	    let r = {left: pointerInfo.x, top: pointerInfo.y, width: 1, height: 1}	
+	    //let r = {left: pointerInfo.x, top: pointerInfo.y, width: 1, height: 1}
+	    let r = Trect.constructFromInfo(pointerInfo, 1, 1)
 	    let objs = fModel.fPlanckWorld.intersectRect(r)
 	    if (objs.length > 0 && objs[0] != this._wheel) {
 		this._body = objs[0]

@@ -1,10 +1,11 @@
+import TplanckBase  from "./TplanckBase.js";
 import TplanckWorld from "./TplanckWorld.js";
-
 import Tmath        from "../libs/Tmath.js";
+import Trect        from "../libs/Trect.js";
 import TimageUtils  from "../libs/TimageUtils.js";
 
 
-class TplanckObject
+class TplanckObject extends TplanckBase
 {
     _widthPixels;
     _heightPixels;
@@ -16,10 +17,12 @@ class TplanckObject
     _body_b2d    
     _sprite;
     _showSprite;
+    _showBorder;    
 
     static eObjectType = {
 	kRectangle : 0,
-	kCircle    : 1
+	kCircle    : 1,
+	kEdge      : 2
     }
 
     _objType;
@@ -28,6 +31,8 @@ class TplanckObject
     
     constructor(objDict, id)
     {
+	super(objDict, id)
+	
 	this.dict2obj(objDict, true)
 	this._uid = id
     }
@@ -115,18 +120,30 @@ class TplanckObject
 	return this._showSprite
     }
 
+    isShowingBorder()
+    {
+	return this._showBorder
+    }
+
     setShowSprite(v)
     {
 	this._showSprite = v
     }
+
+    setShowBorder(v)
+    {
+	this._showBorder = v
+    }
     
     removeFromSimulation()
     {
+	super.removeFromSimulation()
 	this._body_b2d = null
     }
 
     isBeingSimulated()
     {
+	super.isBeingSimulated()
 	return this._body_b2d != null
     }
     
@@ -158,6 +175,12 @@ class TplanckObject
 	    // assumed that width/height are equal.
 	    //
 	    shape = planck.Circle(this._widthWorld/2);
+	} else 	if (this._objType === TplanckObject.eObjectType.kEdge) {
+	    // assumed that width/height are equal.
+	    //
+	    shape = planck.Edge(this._widthWorld/2);
+
+	    console.log("adding an edge.")
 	}
 	
 	body.createFixture(shape, 1.0);
@@ -187,6 +210,8 @@ class TplanckObject
     
     draw(ctx, paused, annotated=false)
     {
+	super.draw(ctx, paused, annotated)
+	
 	let pos_world = this._body_b2d.getPosition();
 	let rot       = this._body_b2d.getAngle();
 	let pos_pixels = TplanckWorld.world2pixels_vec(pos_world)
@@ -214,37 +239,36 @@ class TplanckObject
 	    
 
 	}
-	
-	ctx.beginPath();
 
-	/*
-	if (isSelected == true) {
-	    ctx.lineWidth = 1.5;
-	} else {
-	    ctx.lineWidth = 0.5;
-	}
-	*/
-	if (this.isDynamic()) {
-	    ctx.strokeStyle = 'black';
-	} else {
-	    ctx.strokeStyle = 'grey';	    
-	}
+	if (this._showBorder == true) {
+	    ctx.beginPath();
 
-	if (annotated == true) {
-	    ctx.strokeStyle = 'red';	    
-	}
-
-	if (!paused) {
-	    if (this._objType === TplanckObject.eObjectType.kRectangle) {	    
-		this.drawRect(ctx, pos_pixels, rot);
-	    } else if (this._objType === TplanckObject.eObjectType.kCircle) {
-		this.drawCircle(ctx, pos_pixels, rot);
+	    if (this.isDynamic()) {
+		ctx.strokeStyle = 'black';
+	    } else {
+		ctx.strokeStyle = 'grey';	    
 	    }
-	} else {
-	    if (this._objType === TplanckObject.eObjectType.kRectangle) {	    
-		this.drawRect(ctx, pos_pixels, rot);
-	    } else if (this._objType === TplanckObject.eObjectType.kCircle) {
-		this.drawCircle(ctx, pos_pixels, rot);
+
+	    if (annotated == true) {
+		ctx.strokeStyle = 'red';	    
+	    }
+
+	    if (!paused) {
+		if (this._objType === TplanckObject.eObjectType.kRectangle) {	    
+		    this.drawRect(ctx, pos_pixels, rot);
+		} else if (this._objType === TplanckObject.eObjectType.kCircle) {
+		    this.drawCircle(ctx, pos_pixels, rot);
+		} else if (this._objType === TplanckObject.eObjectType.kEdge) {
+		    this.drawEdge(ctx, pos_pixels, rot);
+		}
+	    } else {
+		if (this._objType === TplanckObject.eObjectType.kRectangle) {	    
+		    this.drawRect(ctx, pos_pixels, rot);
+		} else if (this._objType === TplanckObject.eObjectType.kCircle) {
+		    this.drawCircle(ctx, pos_pixels, rot);
+		} else if (this._objType === TplanckObject.eObjectType.kEdge) {
+		    this.drawEdge(ctx, pos_pixels, rot);
+		}
 	    }
 	}
 
@@ -289,6 +313,18 @@ class TplanckObject
 	ctx.arc(p[0],p[1],this._widthPixels/2,0,2*Math.PI);
 	ctx.stroke();	
     }
+
+    drawEdge(ctx, p_pixels, angle)
+    {	
+	let xformMat = Tmath.xformMatrix(-angle, [p_pixels.x, p_pixels.y])
+
+	let p = [0,0]
+	p = Tmath.xformPoint(p, xformMat)
+
+	ctx.beginPath();
+	//ctx.arc(p[0],p[1],this._widthPixels/2,0,2*Math.PI);
+	ctx.stroke();	
+    }
     
     getCenterInPixels()
     {
@@ -316,7 +352,7 @@ class TplanckObject
     
 
 
-    intersectRect(rectWorldSpace, rectPixelSpace)
+    intersectRect(rectPixelSpace)
     //
     // Description:
     //	    Tests if the object is in the rectangle.
@@ -324,38 +360,46 @@ class TplanckObject
 
     {
 	if (this.isActive()) {
-	    
+
 	    // loop through all fixtures
+
+	    let found = false
             for (let fixture = this._body_b2d.getFixtureList(); fixture; fixture = fixture.getNext()) {
 		let shape = fixture.getShape();
 
 		let numChildren = shape.getChildCount()
 		
-		for (let i=0; i < numChildren; i++) {
+		for (let i=0; i < numChildren && !found; i++) {
 		    
 		    let aabb = fixture.getAABB(i)
-		    
-		    let boxRect = {x1: aabb.lowerBound.x, y1: aabb.lowerBound.y,
-				   x2: aabb.upperBound.x, y2: aabb.upperBound.y}
-		    
-		    return Tmath.overlaps({x1: rectWorldSpace.left, y1: rectWorldSpace.top, x2: rectWorldSpace.left+rectWorldSpace.width, y2: rectWorldSpace.top+rectWorldSpace.height},
-				      boxRect)
+
+		    // This is tricky: flipping Y as Trect assumes an image coordinate system.
+		    //		    
+		    let topLeft  = TplanckWorld.world2pixels_vec({x:aabb.lowerBound.x, y:aabb.upperBound.y})
+		    let botRight = TplanckWorld.world2pixels_vec({x:aabb.upperBound.x, y:aabb.lowerBound.y})
+
+		    let boxRect = Trect.constructFromCoords({x1:topLeft.x, y1:topLeft.y,
+							     x2:botRight.x,y2:botRight.y})
+
+		    found = rectPixelSpace.touches(boxRect)
 		}
+
+		return found
 	    }
 	    
 	} else {
-
+	    
 	    // Inactive objects need to be handled separately.
 	    //
 	    let pos_world = this._body_b2d.getPosition();
 	    let pos_pixels = TplanckWorld.world2pixels_vec(pos_world)
+	    
+	    let boxRect = Trect.constructFromCoords({x1: pos_pixels.x - this._widthPixels/2,
+						     y1: pos_pixels.y - this._heightPixels/2,
+						     x2: pos_pixels.x + this._widthPixels/2,
+						     y2: pos_pixels.y + this._heightPixels/2})
 
-	    let boxRect = {x1: pos_pixels.x - this._widthPixels/2, y1: pos_pixels.y - this._heightPixels/2,
-			   x2: pos_pixels.x + this._widthPixels/2, y2: pos_pixels.y + this._heightPixels/2}
-
-	    return Tmath.overlaps({x1: rectPixelSpace.left, y1: rectPixelSpace.top, x2: rectPixelSpace.left+rectPixelSpace.width, y2: rectPixelSpace.top+rectPixelSpace.height},
-				      boxRect)
-
+	    return rectPixelSpace.touches(boxRect)
 	}
     
 	return false    
@@ -372,13 +416,15 @@ class TplanckObject
 	let ot = this._objType
 	let id = this._uid
 	let ss = this._showSprite
+	let sb = this._showBorder
 	
 	let objData = {pos: p, width: w, height: h, start: s,
 		       isDynamic: d,
 		       activateOnCollision: a,
 		       objType: ot,
 		       id: id,
-		       showSprite: ss}
+		       showSprite: ss,
+		       showBorder: sb}
 
 	if (this._sprite != null) {
 	    objData.sprite = TimageUtils.img2String(this._sprite)
@@ -401,6 +447,7 @@ class TplanckObject
 	let isActive            = null
 	let sprite              = null
 	let showSprite          = null
+	let showBorder          = null
 	
 	if ('pos' in objDict) {
 	    pos = objDict.pos
@@ -436,6 +483,10 @@ class TplanckObject
 
 	if ('showSprite' in objDict) {
 	    showSprite = objDict.showSprite
+	}
+
+	if ('showBorder' in objDict) {
+	    showBorder = objDict.showBorder
 	}
 
 	if ('sprite' in objDict) {
@@ -477,6 +528,10 @@ class TplanckObject
 	    if (showSprite == null) {
 		showSprite = true
 	    }
+
+	    if (showBorder == null) {
+		showBorder = true
+	    }
 	    
 	    if (sprite == null) {
 		sprite = null
@@ -488,12 +543,12 @@ class TplanckObject
 	}
 	
 	if (width != null) {
-	    this._widthWorld   = TplanckWorld.pixels2world_float(width)
+	    this._widthWorld   = TplanckWorld.pixels2world_x(width)
 	    this._widthPixels  = width	    
 	}
 
 	if (height != null) {
-	    this._heightWorld  = TplanckWorld.pixels2world_float(height)
+	    this._heightWorld  = TplanckWorld.pixels2world_y(height)
 	    this._heightPixels = height	    
 	}
 
@@ -519,6 +574,10 @@ class TplanckObject
 
 	if (showSprite != null) {
 	    this._showSprite = showSprite
+	}
+
+	if (showBorder != null) {
+	    this._showBorder = showBorder
 	}
 
 	if (sprite != null) {

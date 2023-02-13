@@ -34,6 +34,7 @@ class TmarginateToolbar extends Ttoolbar
 
 	this.gPaintRectangleId        = "paintRectangleId"	
 	this.gPaintCircleId           = "paintCircleId"
+	this.gPaintEdgeId             = "paintEdgeId"	
 
 	this.gJointTypeWnd            = "jointTypeWndId"
 	this.gJointTypeBtn            = "jointTypeBtnId"
@@ -75,6 +76,9 @@ class TmarginateToolbar extends Ttoolbar
 	this._paintCircleCtrl  = document.getElementById(this.gPaintCircleId)
 	this.respondToClick(this._paintCircleCtrl)
 
+	this._paintEdgeCtrl  = document.getElementById(this.gPaintEdgeId)
+	this.respondToClick(this._paintEdgeCtrl)
+	
 	this._strokePropertiesWnd      = new TstrokePropertiesWnd(this.gPaintStrokePropertiesId)
 	this._paintStrokePropertiesBtn = new TpopupButton(this.gPaintStrokeId,
 							  this._strokePropertiesWnd)
@@ -123,6 +127,9 @@ class TmarginateToolbar extends Ttoolbar
 	    } else if (e.target.id == this.gPaintCircleId) {
 		this.toolChange(this.fAddObjectTool, this._paintCircleCtrl)
 		this.fAddObjectTool.setCircleMode()
+	    } else if (e.target.id == this.gPaintEdgeId) {
+		this.toolChange(this.fAddObjectTool, this._paintEdgeCtrl)
+		this.fAddObjectTool.setEdgeMode()
 	    }
 
 	//this._currentTool.engage()
@@ -157,7 +164,8 @@ class TmarginateToolbar extends Ttoolbar
 	this.deactivateToolStyle(this._scissorsCtrl)
 	this.deactivateToolStyle(this._jointCtrl._div)
 	this.deactivateToolStyle(this._paintRectangleCtrl)
-	this.deactivateToolStyle(this._paintCircleCtrl)	    
+	this.deactivateToolStyle(this._paintCircleCtrl)
+	this.deactivateToolStyle(this._paintEdgeCtrl)	    
     }
 
     toolChange(tool, toolButton)

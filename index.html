@@ -39,6 +39,7 @@
       <input class="paint-toolbar-item-image" type="image" src="./icons/Split.png"      id="scissorsId">      
       <input class="paint-toolbar-item-image" type="image" src="./icons/Rectangle.png"  id="paintRectangleId">
       <input class="paint-toolbar-item-image" type="image" src="./icons/Circle.png"     id="paintCircleId">
+      <input class="paint-toolbar-item-image" type="image" src="./icons/Edge.png"       id="paintEdgeId">      
     
     
       <input class="paint-toolbar-item-image" type="image" src="./icons/Link.png"       id="jointTypeBtnId" >    
@@ -55,67 +56,89 @@
   <!--- Section 2: Canvas -->
   <canvas class="paint-canvas" id="paintCanvasId"></canvas>
 
-  <div class="object-properties-container" id="objectPropertiesId">
 
+
+
+  <div class="properties-container" id="propertiesId">
+
+    <div class="object-properties-container" id="objectPropertiesId">
+      <div class="object-properties-item">
+	<input type="checkbox" id="checkbox.activeId" name="active" checked>
+	<label for="checkbox.activeId">Active</label>
+      </div>
       
-    <div class="object-properties-item">
-      <input type="checkbox" id="checkbox.activeId" name="active" checked>
-      <label for="checkbox.activeId">Active</label>
-    </div>
-    
-    <div class="object-properties-item">
-      <input type="checkbox" id="checkbox.dynamicId" name="dynamic" checked>
-      <label for="checkbox.dynamicId">Dynamic</label>
-    </div>
-    
-    <div class="object-properties-item">
-      <input type="checkbox" id="checkbox.activateOnCollisionId" name="activateOnCollision" checked>
-      <label for="checkbox.activateOnCollisionId">Activate On Collision</label>
+      <div class="object-properties-item">
+	<input type="checkbox" id="checkbox.dynamicId" name="dynamic" checked>
+	<label for="checkbox.dynamicId">Dynamic</label>
+      </div>
+      
+      <div class="object-properties-item">
+	<input type="checkbox" id="checkbox.activateOnCollisionId" name="activateOnCollision" checked>
+	<label for="checkbox.activateOnCollisionId">Activate On Collision</label>
+      </div>
+      
+      <div class="slider-container object-properties-item" id="sliderParent.massId">
+	<p class="slider-label" id="slider.labelId">Mass</p>
+	<input class="slider-range" type="range"  min="0" max="100" value="100" data-color="#f00" id="slider.massId">
+	<input class="slider-number" type="number" min="0" max="100" value="100"                   id="number.massId">
+      </div>
+      
+      <div class="numbers-doubleVal-container">
+	<p class="numbers-item" id="pos.labelId"> Position </p>
+	
+	<label class="numbers-label" for="posX">x:</label> 
+	<input class="numbers-value" type="text" id="number.posX">
+	<label class="numbers-label" for="posY">y:</label> 
+	<input class="numbers-value" type="text" id="number.posY">
+      </div>
+      
+      
+      <div class="numbers-doubleVal-container">
+	<p class="numbers-item" id="size.labelId"> Size </p>
+	
+	<label class="numbers-label" for="width">x:</label> 
+	<input class="numbers-value" type="number" id="number.width">
+	<label class="numbers-label" for="height">y:</label> 
+	<input class="numbers-value" type="number" id="number.height">
+      </div>
+      
+      <div class="object-properties-item">
+	<input type="checkbox" id="checkbox.showSpriteId" name="showSprite" checked>
+	<label for="checkbox.showSpriteId">Show Sprite</label>
+      </div>      
+
+      <div class="object-properties-item">
+	<input type="checkbox" id="checkbox.showBorderId" name="showBorder" checked>
+	<label for="checkbox.showBorderId">Show Border</label>
+      </div>      
     </div>
 
-    <div class="slider-container object-properties-item">
-      <p class="slider-label">Mass</p>
-      <input class="slider-range" type="range"  min="0" max="100" value="100" data-color="#f00" id="slider.massId">
-      <input class="slider-number" type="number" min="0" max="100" value="100"                   id="number.massId">
+
+
+    <div class="joint-properties-container" id="jointPropertiesId">
+      <div class="joint-properties-item">
+	<input type="checkbox" id="checkbox.funId" name="fun" checked>
+	<label for="checkbox.funId">Fun</label>
+      </div>
+
+      <div class="joint-properties-item">
+	<input type="checkbox" id="checkbox.collideConnectedId" name="collideConnected" checked>
+	<label for="checkbox.collideConnectedId">Collide Connected</label>
+      </div>
+
     </div>
-
-
-
-    <div class="numbers-doubleVal-container">
-      <p class="numbers-item" id="pos.labelId"> Position </p>
-
-      <label class="numbers-label" for="posX">x:</label> 
-      <input class="numbers-value" type="text" id="number.posX">
-      <label class="numbers-label" for="posY">y:</label> 
-      <input class="numbers-value" type="text" id="number.posY">
-    </div>
-
-    
-    <div class="numbers-doubleVal-container">
-      <p class="numbers-item" id="size.labelId"> Size </p>
-
-      <label class="numbers-label" for="width">x:</label> 
-      <input class="numbers-value" type="number" id="number.width">
-      <label class="numbers-label" for="height">y:</label> 
-      <input class="numbers-value" type="number" id="number.height">
-    </div>
-    
-    <div class="object-properties-item">
-      <input type="checkbox" id="checkbox.showSpriteId" name="showSprite" checked>
-      <label for="checkbox.showSpriteId">Show Sprite</label>
-    </div>
-    
   </div>
-
 
   
     
   <!--- Section 4: Time Slider -->
-  <div class="paint-time-slider" id="playBackCtrl">
-    <input class="PlayBtn" type="image" id="playPauseBtn" src="./icons/Play2.png">    
-    <input class="PlaySlider" type="range" id="playSlider"/>
-    <input class="PlayFrameNum" type="number" min="0" max="255" value="121" id="playFrameNumber" />
-  </div>
+  <div class="paint-time-slider-backplate" id="playBackCtrl">  
+    <div class="paint-time-slider">
+      <input class="PlayBtn" type="image" id="playPauseBtn" src="./icons/Play2.png">    
+      <input class="PlaySlider" type="range" id="playSlider"/>
+      <input class="PlayFrameNum" type="number" min="0" max="255" value="121" id="playFrameNumber" />
+    </div>
+  </div>    
 
 
 
@@ -138,21 +161,22 @@
 
   
 
-  <div class="paint-stroke-properties-container" id="paintStrokePropertiesId">
-
-    <div class="slider-container">
-      <p     class="slider-label">Size</p>
-      <input class="slider-range"  type="range"  min="1" max="10" value="1" data-color="#f00"   id="slider.strokeSizeId">
-      <input class="slider-number" type="number" min="1" max="10" value="1"                     id="number.strokeSizeId">
+  <div class="paint-stroke-properties-backplate" id="paintStrokePropertiesId">
+    <div class="paint-stroke-properties-container">
+    
+      <div class="slider-container" id="slider.parentStrokeSizeId">
+	<p     class="slider-label">Size</p>
+	<input class="slider-range"  type="range"  min="1" max="10" value="1" data-color="#f00"   id="slider.strokeSizeId">
+	<input class="slider-number" type="number" min="1" max="10" value="1"                     id="number.strokeSizeId">
+      </div>
+      
+      <div class="slider-container" id="slider.parentStrokeOpacityId">
+	<p class="slider-label">Opacity</p>
+	<input class="slider-range" type="range"  min="0" max="100" value="100" data-color="#f00" id="slider.strokeOpacityId">
+	<input class="slider-number" type="number" min="0" max="100" value="100"                   id="number.strokeOpacityId">
+      </div>
     </div>
-
-    <div class="slider-container">
-      <p class="slider-label">Opacity</p>
-      <input class="slider-range" type="range"  min="0" max="100" value="100" data-color="#f00" id="slider.strokeOpacityId">
-      <input class="slider-number" type="number" min="0" max="100" value="100"                   id="number.strokeOpacityId">
-    </div>
-
-  </div>
+  </div>    
 
 
 
@@ -174,6 +198,7 @@
   
 
   <script type="module" src="planck/lib/planck.js"> </script>
+  <script type="module" src="libs/Tvector2d.js"> </script>  
   <script type="module" src="marginate_script.js">  </script>
   
 </body>

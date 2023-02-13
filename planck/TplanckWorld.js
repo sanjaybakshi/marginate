@@ -2,6 +2,7 @@ import TplanckObject from "./TplanckObject.js"
 import TplanckJoint  from "./TplanckJoint.js"
 
 import Tmath         from "../libs/Tmath.js";
+import Trect         from "../libs/Trect.js";
 
 // ALERT: Need to update these when the canvas size changes.
 //
@@ -185,6 +186,10 @@ class TplanckWorld
 	// Delete the object from the list.
 	//
 	this._fObjectList = this._fObjectList.filter(obj => obj != b);	
+
+	// Delete the joint from the list.
+	//
+	this._fJointList = this._fJointList.filter(joint => joint != b);	
 	
     }
 
@@ -233,34 +238,47 @@ class TplanckWorld
     }
 
     
-    intersectRect(rectPixelSpace)
+    intersectRect(rectPixelSpace, filterForObjects=true, filterForJoints=false)
     //
     // Description:
     //	    Tests which boxes are in the rectangle defined by (left,top,right,bottom)
     //
     {
-	let p1 = TplanckWorld.pixels2world_vec(planck.Vec2(rectPixelSpace.left, rectPixelSpace.top))
-	let w  = TplanckWorld.pixels2world_float(rectPixelSpace.width)
-	let h  = TplanckWorld.pixels2world_float(rectPixelSpace.height)	
-
-	let rectWorldSpace = {left: p1.x, top: p1.y, width: w, height: h}
+	let boxes  = []
+	let joints = []
 	
-	let boxes = []
-        for (const b of this._fObjectList) {		
-	    if (b.isBeingSimulated()) {
-
-		if (b.intersectRect(rectWorldSpace, rectPixelSpace)) {
-		    boxes.push(b)
+	if (filterForObjects == true) {
+            for (const b of this._fObjectList) {		
+		if (b.isBeingSimulated()) {
+		    if (b.intersectRect(rectPixelSpace)) {
+			boxes.push(b)
+		    }		    
 		}
-		
 	    }
-	} 
-	return boxes
+	}
+
+	if (filterForJoints == true) {
+            for (const j of this._fJointList) {		
+		if (j.isBeingSimulated()) {		    
+		    if (j.intersectRect(rectPixelSpace)) {
+			joints.push(j)
+		    }		    
+		}
+	    }
+
+	}
+
+	return boxes.concat(joints)
     }
 
-    static pixels2world_float(f)
+    static pixels2world_x(v)
     {
-	return Tmath.remap(0, fCanvasWidth,  0, fWorldWidth,  f)
+	return Tmath.remap(0,fCanvasWidth,0,fWorldWidth,v)
+    }
+
+    static pixels2world_y(v)
+    {
+	return Tmath.remap(0,fCanvasHeight,0,fWorldHeight,v)
     }
     
     static pixels2world_vec(v)

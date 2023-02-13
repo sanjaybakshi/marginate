@@ -95,17 +95,17 @@ class TscissorsTool extends Ttool
 	    if (this._translateStarted) {
 
 		if (this._horizontalMode) {
-		    if (y < this._objRect._y1) {
-			y = this._objRect._y1
-		    } else if (y > this._objRect._y2) {
-			y = this._objRect._y2
+		    if (y < this._objRect._y) {
+			y = this._objRect._y
+		    } else if (y > this._objRect.bottom()) {
+			y = this._objRect.bottom()
 		    }
 		    this._yOffset = y - this._objRect.center().y
 		} else {
-		    if (x < this._objRect._x1) {
-			x = this._objRect._x1
-		    } else if (x > this._objRect._x2) {
-			x = this._objRect._x2
+		    if (x < this._objRect._x) {
+			x = this._objRect._x
+		    } else if (x > this._objRect.right()) {
+			x = this._objRect.right()
 		    }
 		    this._xOffset = x - this._objRect.center().x
 
@@ -144,8 +144,8 @@ class TscissorsTool extends Ttool
 		ctx.lineWidth = 2
 		ctx.strokeStyle = 'purple'
 	    
-		ctx.moveTo(this._objRect._x1, this._objRect.center().y + this._yOffset)
-		ctx.lineTo(this._objRect._x2, this._objRect.center().y + this._yOffset)
+		ctx.moveTo(this._objRect._x, this._objRect.center().y + this._yOffset)
+		ctx.lineTo(this._objRect.right(), this._objRect.center().y + this._yOffset)
 		ctx.stroke()
 	    } else {
 		// Draw a vertical cut line.
@@ -154,8 +154,8 @@ class TscissorsTool extends Ttool
 		ctx.lineWidth = 1
 		ctx.strokeStyle = 'purple'
 		
-		ctx.moveTo(this._objRect.center().x + this._xOffset, this._objRect._y1)
-		ctx.lineTo(this._objRect.center().x + this._xOffset, this._objRect._y2)
+		ctx.moveTo(this._objRect.center().x + this._xOffset, this._objRect._y)
+		ctx.lineTo(this._objRect.center().x + this._xOffset, this._objRect.bottom())
 		ctx.stroke()
 	    }
 
@@ -216,6 +216,7 @@ class TscissorsTool extends Ttool
 	    this._objRect = Trect.constructFromCenterWidthHeight(center,width,height)
 
 	    
+	    
 	    for (const obj of fModel.fSelectionList._sList) {
 		let rect = Trect.constructFromCenterWidthHeight(obj.getCenterInPixels(),
 								obj.widthInPixels(),
@@ -230,9 +231,10 @@ class TscissorsTool extends Ttool
 	    // Convert canvas coordinates to window coordinates.
 	    //
 
-	    let pos_wnd = this.fCanvas.canvasCoordsToWindow( {x: this._objRect._x2,
-							      y: this._objRect._y2} )
+	    let pos_wnd = this.fCanvas.canvasCoordsToWindow( {x: this._objRect.right(),
+							      y: this._objRect.bottom()} )
 	    this.fScissorsGoDiv.showAt(pos_wnd)
+
 
 	}	
     }
@@ -324,14 +326,14 @@ class TscissorsTool extends Ttool
     
     circleManipPosition()
     {
-	return {x:this._objRect._x1,
+	return {x:this._objRect._x,
 		y:this._objRect.center().y + this._yOffset}
     }
 
     verticalManipPosition()
     {
 	return {x: this._objRect.center().x + this._xOffset,
-		y: this._objRect._y1 - this._manipSizeH}
+		y: this._objRect._y - this._manipSizeH}
     }
 
 
@@ -354,14 +356,14 @@ class TscissorsTool extends Ttool
 							   obj.widthInPixels(),
 							   obj.heightInPixels())
 	
-	let topRect = Trect.constructFromCoords({x1: objRect._x1,
-						 y1: objRect._y1,
-						 x2: objRect._x2,
+	let topRect = Trect.constructFromCoords({x1: objRect._x,
+						 y1: objRect._y,
+						 x2: objRect.right(),
 						 y2: yPos})
-	let botRect = Trect.constructFromCoords({x1: objRect._x1,
+	let botRect = Trect.constructFromCoords({x1: objRect._x,
 						 y1: yPos,
-						 x2: objRect._x2,
-						 y2: objRect._y2})
+						 x2: objRect.right(),
+						 y2: objRect.bottom()})
 	return [topRect, botRect]
     }
 
@@ -386,14 +388,14 @@ class TscissorsTool extends Ttool
 							   obj.widthInPixels(),
 							   obj.heightInPixels())
 
-	let leftRect = Trect.constructFromCoords({x1: objRect._x1,
-						  y1: objRect._y1,
+	let leftRect = Trect.constructFromCoords({x1: objRect._x,
+						  y1: objRect._y,
 						  x2: xPos,
-						  y2: objRect._y2})
+						  y2: objRect.bottom()})
 	let rightRect = Trect.constructFromCoords({x1: xPos,
-						   y1: objRect._y1,
-						   x2: objRect._x2,
-						   y2: objRect._y2})
+						   y1: objRect._y,
+						   x2: objRect.right(),
+						   y2: objRect.bottom()})
 
 	return [leftRect, rightRect]
     }
@@ -430,18 +432,18 @@ class TscissorsTool extends Ttool
 		let objSpriteImg = obj.sprite()
 		
 		let cropRect_imgSpace =
-		    Trect.constructFromCoords({x1: Tmath.remap(objRect._x1, objRect._x2,
+		    Trect.constructFromCoords({x1: Tmath.remap(objRect._x, objRect.right(),
 							       0, objSpriteImg.width,
-							       r._x1),
-					       y1: Tmath.remap(objRect._y1, objRect._y2,
+							       r._x),
+					       y1: Tmath.remap(objRect._y, objRect.bottom(),
 							       0, objSpriteImg.height,
-							       r._y1),
-					       x2: Tmath.remap(objRect._x1, objRect._x2,
+							       r._y),
+					       x2: Tmath.remap(objRect._x, objRect.right(),
 							       0, objSpriteImg.width,
-							       r._x2),
-					       y2: Tmath.remap(objRect._y1, objRect._y2,
+							       r.right()),
+					       y2: Tmath.remap(objRect._y, objRect.bottom(),
 							       0, objSpriteImg.height,
-							       r._y2)})
+							       r.bottom())})
 
 		let croppedImage = TimageUtils.crop(objSpriteImg,
 						    cropRect_imgSpace)

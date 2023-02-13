@@ -29,6 +29,10 @@ class TaddObjectTool extends Ttool
     {
 	this._objType = TplanckObject.eObjectType.kCircle	
     }
+    setEdgeMode()
+    {
+	this._objType = TplanckObject.eObjectType.kEdge
+    }
     
     pointerDown(e)
     {

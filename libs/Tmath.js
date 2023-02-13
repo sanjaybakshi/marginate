@@ -38,24 +38,41 @@ class Tmath
 	return newP
     }
 
-    // Check if rectangle a overlaps rectangle b
-    // Each object (a and b) should have 2 properties to represent the
-    // top-left corner (x1, y1) and 2 for the bottom-right corner (x2, y2).
-    static overlaps(a, b) {
+    /*
+    static dot(v1,v2)
+    {
+	return (v1.x * v2.x + v1.y * v2.y);
 
-	//console.log("testing: ")
-	//console.log("a: " + a.x1 + " " + a.y1 + " " + a.x2 + " " + a.y2)
-	//console.log("b: " + b.x1 + " " + b.y1 + " " + b.x2 + " " + b.y2)	
-
-	// no horizontal overlap
-	if (a.x1 >= b.x2 || b.x1 >= a.x2) return false;
-	
-	// no vertical overlap
-	if (a.y1 >= b.y2 || b.y1 >= a.y2) return false;
-	
-	return true;
+    }
+    static len2(v)
+    {
+	return Tmath.dot(v,v)
+    }
+    
+    static len(v)
+    {
+	return Math.sqrt(Tmath.len2(v))
+    }
+    
+    static normalize(v)
+    {
+	let d = Tmath.len(v)
+	if (d > 0) {
+	    v.x = v.x/d
+	    v.y = v.y/d
+	}
+	return v
     }
 
+    static perp(v)
+    {
+	let x = v.x
+	let y = v.y
+
+	v.x =  y
+	v.y = -x
+	}
+	*/
 }
 
 export default Tmath

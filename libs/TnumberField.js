@@ -20,7 +20,6 @@ class TnumberField extends Tdiv
     
     numberChange(e)
     {
-	console.log("number change")
 	e.stopPropagation()
 	//this._div.value = e.target.value
 	this._callOnNumberChangeFn(e.target.value)
@@ -28,7 +27,6 @@ class TnumberField extends Tdiv
     
     setValue(v)
     {
-	console.log(v)
 	this._div.value = parseFloat(v).toFixed(0)
     }
     

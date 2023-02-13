@@ -1,5 +1,8 @@
 import TimageUtils from "./TimageUtils.js";
 
+import Tvector2d   from "./Tvector2d.js";
+import Tmath       from "./Tmath.js";
+
 class Tstroke
 {
     constructor() {
@@ -74,9 +77,9 @@ class Tstroke
 	ctx.save()
 	
 	//ctx.strokeStyle = 'black'
-	ctx.strokeStyle = this._color
-	ctx.lineCap     = 'round'
-	ctx.lineJoin    = 'round'
+	//ctx.strokeStyle = this._color
+	//ctx.lineCap     = 'round'
+	//ctx.lineJoin    = 'round'
 
 	if (this._fMode == this.eModes.kEraserMode) {
 	    ctx.globalCompositeOperation = 'destination-out';
@@ -86,7 +89,7 @@ class Tstroke
 
 	    //console.log("paint")
 	}
-	
+	/*
 	for (let i=0; i < this._pointList.length-1; i++) {
 
 	    let pt1 = this._pointList[i]
@@ -106,7 +109,26 @@ class Tstroke
 	    //output.textContent = 'pe: ' + i + ' ' + pr
 	    //console.log(i,pr)
 	}
+*/
 
+	let sp = this.getStrokePolygon()
+
+
+	ctx.beginPath()
+
+	if (sp.length > 5) {
+	    ctx.fillStyle = this._color
+	    
+	    ctx.moveTo(sp[0].x, sp[0].y)
+
+	    for (let i=1; i < sp.length; i++) {
+		ctx.lineTo(sp[i].x,sp[i].y)
+	    }
+
+	    ctx.closePath()
+	    ctx.fill()
+	}
+	
 	ctx.restore()
     }
     
@@ -217,6 +239,174 @@ class Tstroke
 	let newImage = inMemoryCanvas.transferToImageBitmap()
 	return newImage
     }
+
+
+    getStrokePolygon()
+    {
+	let leftPts  = []
+	let rightPts = []
+
+
+	let vecs = []
+	let dist = []
+    
+	if (this._pointList.length == 0) {
+	    return []
+	}
+
+	/*
+	this._pointList = []
+	this._pointList = [ {x:50,y:50},
+			    {x:60,y:50},
+			    {x:70,y:50},
+			    {x:140,y:50},
+			    {x:210,y:50},
+			    {x:280,y:50},
+			    {x:330,y:50},
+			    {x:350,y:50},
+			    {x:370,y:50},
+			    {x:390,y:50}]
+			    */
+
+	vecs.push(new Tvector2d(0,0))
+	dist.push(0.0)
+	
+	for (let i=1; i < this._pointList.length; i++) {
+
+	    // Compute vector from current point to the previous point.
+	    //
+
+	    let p0 = new Tvector2d(this._pointList[i-1].x,this._pointList[i-1].y)
+	    let p1 = new Tvector2d(this._pointList[i].x,  this._pointList[i].y)
+	    
+	    let v  = p1.subtract(p0)
+
+	    dist.push( v.len() )
+	    
+	    v.normalize()
+	    vecs.push(v)
+	}
+
+
+	if (this._pointList.length >= 2) {
+	    // Make the first vector the same as the second.
+	    //
+	    vecs[0].x = vecs[1].x
+	    vecs[0].y = vecs[1].y
+
+	    dist[0] = 0.0
+	}
+
+	let brushWidth  = this._brushWidth
+	let prevPressure = 0.0
+	const RATE_OF_PRESSURE_CHANGE = 0.275
+	let thinning = 0.5
+	
+	for (let i=0; i < this._pointList.length; i++) {
+
+	    let perpendicularVec = vecs[i].perp()
+	    let pointAsVec = new Tvector2d(this._pointList[i].x, this._pointList[i].y)
+
+
+	    // What is the speed.
+	    //
+	    let d = dist[i]
+
+            const sp = Math.min(1, d / brushWidth)
+            const rp = Math.min(1, 1 - sp)
+
+	    let pressure = Math.min( 1,
+				     prevPressure + (rp-prevPressure) * (sp * RATE_OF_PRESSURE_CHANGE))
+	    prevPressure = pressure
+
+	    let strokeRadius = brushWidth * ((0.5 - thinning * (0.5 - pressure)))
+
+	    if (i === this._pointList.length - 1) {
+		//strokeRadius = brushWidth
+	    }
+	    
+	    
+	    let offset = perpendicularVec.multiplyScalar(strokeRadius)
+	    
+	    let pLeft  = pointAsVec.clone()
+	    let pRight = pointAsVec.clone()
+
+
+	    pLeft  = pLeft.add(offset)
+	    pRight = pRight.subtract(offset)
+
+
+	    leftPts.push(pLeft)
+	    rightPts.push(pRight)
+
+
+	    
+	}
+
+	return leftPts.concat(rightPts.reverse())
+
+	/*
+	let pts = [ {x:50,y:50},{x:60,y:50},{x:70,y:50},{x:80,y:50},{x:90,y:50},{x:100,y:50},
+		    {x:100,y:60},{x:90,y:60},{x:80,y:60},{x:70,y:60},{x:60,y:60},{x:50,y:60} ]
+		    return pts
+		    */
+	//return leftPts
+    }
+    
+
+    /*
+    smootherStrokePoints()
+    {
+	// Parameters:
+	//	streamline - how much to soften your points.
+	//
+
+	let streamline = 0.5
+	
+	// No points to smooth.
+	//
+	if (this._pointList.length ==0) {
+	    return []
+	}
+
+	let retPts = []
+
+	// Copy into retPts
+	//
+	for (let i=0; i < this._pointList.length; i++) {
+
+	    let v = {x: this._pointList[i].x,
+		     y: this._pointList[i].y,
+		     pressure: this._pressureList[i]}
+	    
+	    retPts.push(v)
+	}
+
+
+	
+	const t = 0.15 + (1 - streamline) * 0.85
+
+	// Add extra points between the two to help avoid dashed lines.
+	//
+	if (retPts.length == 2) {
+	    let last = retPts[1]
+
+	    // Remove the last point.
+	    //
+	    retPts = retPts.slice(0,-1)
+	    
+	    for (let i = 1; i < 5; i++) {
+		
+	    }
+	}
+    }
+
+    getStrokeOutlinePoints()
+    {
+	
+	
+    }
+*/
 }    
 
 export default Tstroke;

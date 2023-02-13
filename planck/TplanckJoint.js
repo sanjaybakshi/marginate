@@ -1,7 +1,10 @@
+import TplanckBase  from "./TplanckBase.js";
 import TplanckWorld from "./TplanckWorld.js";
 
+import Trect        from "../libs/Trect.js";
 
-class TplanckJoint
+
+class TplanckJoint extends TplanckBase
 {
     _obj1;
     _obj1Pos;
@@ -20,25 +23,44 @@ class TplanckJoint
     }
 
     _jointType;
+    _collideConnected = true;
     
     _uid;
     
     constructor(jointDict, id)
     {
+	super(jointDict, id)
+	
 	this.dict2joint(jointDict, true)
 	this._uid = id
     }
 
     removeFromSimulation()
     {
+	super.removeFromSimulation()
 	this._joint_b2d = null
     }
 
     isBeingSimulated()
     {
+	super.isBeingSimulated()	
 	return this._joint_b2d != null
     }
     
+
+    collideConnected()
+    {
+	return this._collideConnected
+    }
+
+    setCollideConnected(v)
+    {
+	this._collideConnected = v
+	if (this._joint_b2d != null) {
+	    this._joint_b2d.m_collideConnected = v
+	}
+	console.log("set it to " + v)
+    }
     
     addToSimulation(world)
     {
@@ -53,7 +75,7 @@ class TplanckJoint
 	} else if (this._jointType == TplanckJoint.eJointType.kRevolute) {
 	    j = this.makeRevoluteJoint(world)	    	    
 	}
-	this._joint_b2d = j
+	this._joint_b2d = j	
     }
 
     makeDistanceJoint(world)
@@ -64,8 +86,9 @@ class TplanckJoint
 	worldAnchorOnA = TplanckWorld.pixels2world_vec(worldAnchorOnA)
 	worldAnchorOnB = TplanckWorld.pixels2world_vec(worldAnchorOnB)
 
+	console.log(this._collideConnected)
 	let j = world.createJoint(planck.DistanceJoint({
-	    collideConnected: true,
+	    collideConnected: this._collideConnected,
 	}, this._obj1._body_b2d, this._obj2._body_b2d, worldAnchorOnA, worldAnchorOnB))
 //	let j = world.createJoint(planck.RevoluteJoint({
 //	    collideConnected: false,
@@ -92,7 +115,7 @@ class TplanckJoint
 							this._obj2._body_b2d,
 							worldAnchorOnA))
 
-	j.m_collideConnected = false	
+	j.m_collideConnected = this._collideConnected
 	j.m_dampingRatio = 0.1
 	j.m_frequencyHz = 3.0
 
@@ -111,7 +134,7 @@ class TplanckJoint
 						     worldAnchorOnB,
 						     planck.Vec2(0.0,1.0) ))
 	
-	j.m_collideConnected = false
+	j.m_collideConnected = this._collideConnected
 	j.m_motorSpeed       = 50.0
 	j.m_maxMotorTorque   = 10.0
 	j.m_enableMotor      = true
@@ -124,6 +147,8 @@ class TplanckJoint
     
     draw(ctx, paused, annotated=false)
     {
+	super.draw(ctx, paused, annotated)
+	
 	//var p1 = TplanckWorld.world2pixels_vec(this._joint_b2d.getBodyA().getPosition())
 	//var p2 = TplanckWorld.world2pixels_vec(this._joint_b2d.getBodyB().getPosition())
 
@@ -138,7 +163,11 @@ class TplanckJoint
 	ctx.beginPath();
 	ctx.lineWidth = .5;
 	ctx.strokeStyle = 'grey';	    
-	
+
+	if (annotated == true) {
+	    ctx.strokeStyle = 'red';	    
+	}
+
 	ctx.beginPath();
 	//ctx.moveTo(p1.x, p1.y)
 	//ctx.lineTo(a1.x, a1.y)
@@ -154,6 +183,25 @@ class TplanckJoint
 	ctx.restore()	
     }
 
+
+    intersectRect(rectPixelSpace)
+    //
+    // Description:
+    //	    Tests if the joint is in the rectangle.
+    //
+    {	
+	var a1 = TplanckWorld.world2pixels_vec(this._joint_b2d.getAnchorA())
+	if (this._jointType == TplanckJoint.eJointType.kMotor) {
+	    a1 = TplanckWorld.world2pixels_vec(this._joint_b2d.getBodyA().getPosition())	    
+	}
+	var a2 = TplanckWorld.world2pixels_vec(this._joint_b2d.getAnchorB())	    
+
+	let boxRect = Trect.constructFromInfo({x:a1.x,y:a1.y},0,0)
+	boxRect.addPoint({x:a2.x,y:a2.y})
+	
+	return rectPixelSpace.touches(boxRect)
+    }
+    
     joint2dict()
     {
 	let jType = this._jointType
@@ -163,12 +211,13 @@ class TplanckJoint
 	
 	let o1Pos = this._obj1Pos
 	let o2Pos = this._obj2Pos
-
+	
 	let start = this._existanceStart
 
+	let cc    = this._collideConnected
 	let id    = this._uid
 	
-	let jointData = {jointType: jType, obj1: o1id, obj2: o2id, obj1Pos: o1Pos, obj2Pos: o2Pos, start: start, id: id}
+	let jointData = {jointType: jType, obj1: o1id, obj2: o2id, obj1Pos: o1Pos, obj2Pos: o2Pos, collideConnected: cc, start: start, id: id}
 	return jointData
     }
 
@@ -180,7 +229,7 @@ class TplanckJoint
 	let obj2    = null
 	let obj2Pos = null
 	let start   = null
-
+	let cc      = null
 	
 	if ('jointType' in jointDict) {
 	    jType = jointDict.jointType
@@ -202,6 +251,10 @@ class TplanckJoint
 	    obj2Pos = jointDict.obj2Pos
 	}
 
+	if ('collideConnected' in jointDict) {
+	    cc = jointDict.collideConnected
+	}
+
 	if ('start' in jointDict) {
 	    start = jointDict.start
 	}
@@ -221,6 +274,9 @@ class TplanckJoint
 	    }
 	    if (obj2Pos == null) {
 		obj2Pos = {x:0,y:0}
+	    }
+	    if (cc == null) {
+		cc = true
 	    }
 	    if (start == null) {
 		start = 0
@@ -244,6 +300,10 @@ class TplanckJoint
 	if (obj2Pos != null) {
 	    this._obj2Pos = obj2Pos
 	}
+	if (cc != null) {
+	    this._collideConnected = cc
+	}
+	
 	if (start != null) {
 	    this._existanceStart = start
 	}

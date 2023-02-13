@@ -1,5 +1,6 @@
 import Ttool          from "../libs/Ttool.js"
 import Tpointer       from "../libs/Tpointer.js";
+import Trect          from "../libs/Trect.js";
 
 import TplanckWorld   from "../planck/TplanckWorld.js";
 import TplanckObject  from "../planck/TplanckObject.js";
@@ -15,7 +16,7 @@ class TselectTool extends Ttool
 
 	this._selectionStarted = false
 
-	this.fCurrentRect = {top:0, left:0, width:0, height:0}
+	this.fCurrentRect = Trect.constructFromCoords({x1:0,y1:0,x2:0,y2:0})
     }
 
     
@@ -26,10 +27,10 @@ class TselectTool extends Ttool
 	let pointerInfo = Tpointer.getPointer(e)
 	this._selectionStarted = true
 
-	this.fCurrentRect.top    = pointerInfo.y
-	this.fCurrentRect.left   = pointerInfo.x
-	this.fCurrentRect.width  = 0
-	this.fCurrentRect.height = 0
+	this.fCurrentRect._x = pointerInfo.x
+	this.fCurrentRect._y = pointerInfo.y
+	this.fCurrentRect._width = 0
+	this.fCurrentRect._height = 0
     }
 
     pointerMove(e)
@@ -39,9 +40,7 @@ class TselectTool extends Ttool
 	if (this._selectionStarted) {
 	    let pointerInfo = Tpointer.getPointer(e)
 
-	    this.fCurrentRect.width  = pointerInfo.x - this.fCurrentRect.left
-	    this.fCurrentRect.height = pointerInfo.y - this.fCurrentRect.top	    
-
+	    this.fCurrentRect.addPoint( {x:pointerInfo.x, y:pointerInfo.y} )	    
 	}
 	
     }
@@ -54,15 +53,14 @@ class TselectTool extends Ttool
 	if (this._selectionStarted) {
 	    let pointerInfo = Tpointer.getPointer(e)
 
-	    this.fCurrentRect.width  = pointerInfo.x - this.fCurrentRect.left
-	    this.fCurrentRect.height = pointerInfo.y - this.fCurrentRect.top	    
+	    this.fCurrentRect.addPoint( {x:pointerInfo.x, y:pointerInfo.y} )	    
 	    
-	    let selObjs = fModel.fPlanckWorld.intersectRect(this.fCurrentRect)
+	    let selThings = fModel.fPlanckWorld.intersectRect(this.fCurrentRect, true, true)
 
-	    fModel.fSelectionList.replace(selObjs)
+	    fModel.fSelectionList.replace(selThings)
 	}    
 	this._selectionStarted = false
-	this.fCurrectRect = {top: 0, left: 0, width: 0, height: 0}
+	this.fCurrectRect =  Trect.constructFromCoords({x1:0,y1:0,x2:0,y2:0})
     }
 
     draw(ctx)
@@ -71,25 +69,8 @@ class TselectTool extends Ttool
 
 	if (this._selectionStarted == true) {
 
-	    let x1 = this.fCurrentRect.left
-	    let y1 = this.fCurrentRect.top
-	    let x2 = this.fCurrentRect.left + this.fCurrentRect.width
-	    let y2 = this.fCurrentRect.top  + this.fCurrentRect.height
-
-	    let w = this.fCurrentRect.width
-	    let h = this.fCurrentRect.height
-
 	    ctx.save()
-	    
-	    ctx.beginPath();
-	    ctx.setLineDash([10, 10]);
-	    ctx.moveTo(x1,y1);
-	    ctx.lineTo(x1+w, y1)
-	    ctx.lineTo(x1+w, y1+h)
-	    ctx.lineTo(x1,   y1+h)
-	    ctx.lineTo(x1,   y1)	    
-	    ctx.stroke();
-
+	    this.fCurrentRect.drawDashed(ctx, 10, 10)
 	    ctx.restore()	
 
 	}

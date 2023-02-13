@@ -4,12 +4,25 @@
 
 class Tdiv
 {
-    constructor(divId)
+    _div          = null
+    _displayStyle = null
+    
+    constructor(id)
     {
-	this._div = document.getElementById(divId)
-
+	this._div = document.getElementById(id)
+	if (this._div != null) {
+	    this._displayStyle = this._div.style.getPropertyValue('display')
+	}
     }
 
+    static constructFromElement(element)
+    {
+	let newDiv = new Tdiv("")
+	newDiv._div = element
+	newDiv._displayStyle = element.style.getPropertyValue('display')	
+	return newDiv
+    }
+    
     toggleDisplay()
     {
 	if (this.isVisible()) {
@@ -49,12 +62,17 @@ class Tdiv
 
     hide()
     {
+	// Cache the display style.
+	//
+	this._displayStyle = this._div.style.getPropertyValue('display')
 	this._div.style.display = "none"
     }
 
     show()
     {
-	this._div.style.display = "inline-grid"
+	//this._div.style.display = "inline-grid"
+	//this._div.style.display = this._displayStyle
+	this._div.style.display = "block"
     }
 
     showAt(pos)

@@ -12,10 +12,16 @@ class TmarginateVC
 	this.gCanvasId          = 'paintCanvasId' // Change this to marginateCanvasId
 	this.gPlaybackSliderId  = 'playBackCtrl'
 	this.gToolbarId         = 'paintToolbarId'
-	this.gPropertiesPanelId = 'objectPropertiesId' 
+
+	this.gPropertiesPanelId       = 'propertiesId'
+	this.gObjectPropertiesPanelId = 'objectPropertiesId' 
+	this.gJointPropertiesPanelId  = 'jointPropertiesId' 
 	
 	this.fCanvas          = new TmarginateCanvas(this.gCanvasId, this)
-	this.fPropertiesPanel = new TmarginatePropertiesPanel(this.gPropertiesPanelId, this)	
+	this.fPropertiesPanel = new TmarginatePropertiesPanel(this.gPropertiesPanelId,
+							      this.gObjectPropertiesPanelId,
+							      this.gJointPropertiesPanelId,
+							      this)	
 	this.fToolbar         = new TmarginateToolbar(this.gToolbarId, this.fCanvas)
 	this.fPlaybackSlider  = new TmarginatePlaybackSlider(this.gPlaybackSliderId)
 
@@ -30,7 +36,7 @@ class TmarginateVC
 
     layoutControls()
     {
-	let propertiesPanelWidth = 210
+	let propertiesPanelWidth = 250
 	
 	let newWindowWidth  = window.innerWidth
 	let newWindowHeight = window.innerHeight
@@ -38,8 +44,7 @@ class TmarginateVC
 	let sliderWH = this.fPlaybackSlider.getWidthHeight()
 	this.fPlaybackSlider.setWidthHeight({width: window.innerWidth, height: sliderWH.height})
 	
-	this.fPlaybackSlider.showAt({x:0, y:window.innerHeight - sliderWH.height})
-
+	this.fPlaybackSlider.showAt({x:0, y:window.innerHeight - sliderWH.height - 0})
 
 	let toolbarWidthHeight = this.fToolbar.getWidthHeight()
 	let toolbarPos         = this.fToolbar.getPosition()
@@ -61,17 +66,18 @@ class TmarginateVC
 	this.fCanvas.showAt({x:x,y: y})
 
 	
-	//console.log(toolbarPos.y)
-	//console.log(toolbarWidthHeight.height)
 	//let ppHeight = timeSliderPos.y - (toolbarPos.y+toolbarWidthHeight.height)
 	//let ppHeight = timeSliderPos.y - (toolbarPos.y + toolbarWidthHeight.height+20);
 
 	//ppHeight = timeSliderPos.y - (toolbarPos.y + toolbarWidthHeight.height);
 
+	//let ppHeight = timeSliderPos.y - (toolbarPos.y + toolbarWidthHeight.height)
 	let ppHeight = timeSliderPos.y - (toolbarPos.y + toolbarWidthHeight.height)
-
+	
 	this.fPropertiesPanel.setWidthHeight({width:propertiesPanelWidth, height: ppHeight})
+
 	this.fPropertiesPanel.showAt({x:window.innerWidth - propertiesPanelWidth, y: toolbarPos.y+toolbarWidthHeight.height})
+	//this.fPropertiesPanel.showAt({x:window.innerWidth - propertiesPanelWidth, y: toolbarPos.y+toolbarWidthHeight.height-100})
     }
 
     vcDraw(ctx)

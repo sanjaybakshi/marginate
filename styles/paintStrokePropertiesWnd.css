@@ -5,9 +5,13 @@
 */
 
 
-.paint-stroke-properties-container {
+.paint-stroke-properties-backplate {
     display:          none;            /* Hidden by default */
     position:         absolute;        /* Stay in place */
+}
+
+.paint-stroke-properties-container {
+    display:          inline-grid;     /* Hidden by default */
     z-index:          1;               /* Sit on top */
     padding:	      10px;
     background-color: var(--window-background-color);
@@ -33,4 +37,10 @@
 
 .slider-number {
     flex-basis: 50px;
+    min-window: 0;
+}
+
+/* This is a hack for firefox, doesn't respect the .slider-number flex parameters. */
+input[type="number"] {
+    width: 40px;
 }
