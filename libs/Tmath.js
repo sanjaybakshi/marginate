@@ -1,6 +1,15 @@
 class Tmath
 {
-    constructor() {
+    constructor()
+    {
+
+	// Generate some random numbers.
+	//
+
+	this._randomNumbers = []
+	for (let i=0; i < 5000; i++) {
+	    this._randomNumbers.push(Math.random())
+	}
 
     }
 
@@ -38,6 +47,19 @@ class Tmath
 	return newP
     }
 
+    static radians2degrees(radians)
+    {
+	var pi = Math.PI;
+	return radians * (180/pi);
+    }
+    
+    static degrees2radians(degrees)
+    {
+	var pi = Math.PI;
+	return degrees * (pi/180);
+    }
+
+    
     /*
     static dot(v1,v2)
     {
@@ -72,7 +94,38 @@ class Tmath
 	v.x =  y
 	v.y = -x
 	}
-	*/
+    */
+
+
+
+    getRandom(i)
+    {
+	let index = i % this._randomNumbers.length
+	return this._randomNumbers[index]
+	
+    }
+    
+    // http://indiegamr.com/generate-repeatable-random-numbers-in-js/
+
+   
+    static seededRandom(min, max, seed)
+    // in order to work 'Math.seed' must NOT be undefined,
+    // so in any case, you HAVE to provide a Math.seed
+    {
+	max = max || 1;
+	min = min || 0;
+	
+	let mSeed = (seed * 9301 + 49297) % 233280;
+	var rnd = mSeed / 233280;
+	
+	return min + rnd * (max - min);
+    }
+
+    static seededRandom2(seed)
+    {
+	const x = Math.sin(seed) * 10000;
+	return x - Math.floor(x);
+    }    
 }
 
 export default Tmath

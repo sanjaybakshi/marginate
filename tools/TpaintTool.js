@@ -37,7 +37,7 @@ class TpaintTool extends Ttool
 
 	let pointerInfo = Tpointer.getPointer(e)
 	this._strokeStarted = true
-	this.fCurrentStroke.pushStrokePt({x:pointerInfo.x,y:pointerInfo.y}, pointerInfo.pressure)		
+	this.fCurrentStroke.pushStrokePt(pointerInfo)
     }
 
     pointerMove(e)
@@ -47,7 +47,7 @@ class TpaintTool extends Ttool
 	if (this._strokeStarted) {
 	    let pointerInfo = Tpointer.getPointer(e)
 	    
-	    this.fCurrentStroke.pushStrokePt({x:pointerInfo.x,y:pointerInfo.y}, pointerInfo.pressure)
+	    this.fCurrentStroke.pushStrokePt(pointerInfo)
 
 	}
 	

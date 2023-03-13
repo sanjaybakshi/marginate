@@ -45,8 +45,13 @@ class Tpointer
 	let bx = e.target.getBoundingClientRect()
 	x = e.clientX - bx.left
 	y = e.clientY - bx.top
+
+	let respectPressure = false
+	if (e.pointerType == "pen") {
+	    respectPressure = true
+	}
 	
-	return {x: x, y: y, pressure: pressure};
+	return {x: x, y: y, pressure: pressure, respectPressure: respectPressure};
     }
 }
 

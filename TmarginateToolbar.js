@@ -15,6 +15,10 @@ import TscissorsTool        from "./tools/TscissorsTool.js"
 import TjointToolTypesWnd   from "./tools/TjointToolTypesWnd.js"
 import TjointTool           from "./tools/TjointTool.js"
 
+import TdrawToolTypesWnd    from "./tools/TdrawToolTypesWnd.js"
+import TdrawTool            from "./tools/TdrawTool.js"
+
+
 class TmarginateToolbar extends Ttoolbar
 {
     constructor(toolbarId, canvas)
@@ -36,13 +40,19 @@ class TmarginateToolbar extends Ttoolbar
 	this.gPaintCircleId           = "paintCircleId"
 	this.gPaintEdgeId             = "paintEdgeId"	
 
-	this.gJointTypeWnd            = "jointTypeWndId"
-	this.gJointTypeBtn            = "jointTypeBtnId"
 	
+	this.gJointTypeWnd            = "jointTypeWndId"
+	this.gJointTypeBtn            = "jointTypeBtnId"	
 	this._jointTypeWnd            = new TjointToolTypesWnd(this.gJointTypeWnd, this)
-
 	this._jointCtrl               = new TpopupButton(this.gJointTypeBtn,
 							 this._jointTypeWnd)
+
+
+	this.gDrawTypeWnd             = "drawTypeWndId"
+	this.gDrawTypeBtn             = "drawTypeBtnId"
+	this._drawTypeWnd             = new TdrawToolTypesWnd(this.gDrawTypeWnd, this)
+	this._drawCtrl                = new TpopupButton(this.gDrawTypeBtn,
+							 this._drawTypeWnd)
 	
 
 	
@@ -93,6 +103,7 @@ class TmarginateToolbar extends Ttoolbar
 	this.fXformTool     = new TxformTool(this.fCanvas)
 	this.fScissorsTool  = new TscissorsTool(this.fCanvas)
 	this.fJointTool     = new TjointTool(this.fCanvas)
+	this.fDrawTool      = new TdrawTool(this.fCanvas)
 
 	
 
@@ -163,6 +174,7 @@ class TmarginateToolbar extends Ttoolbar
 	this.deactivateToolStyle(this._xformCtrl)
 	this.deactivateToolStyle(this._scissorsCtrl)
 	this.deactivateToolStyle(this._jointCtrl._div)
+	this.deactivateToolStyle(this._drawCtrl._div)	
 	this.deactivateToolStyle(this._paintRectangleCtrl)
 	this.deactivateToolStyle(this._paintCircleCtrl)
 	this.deactivateToolStyle(this._paintEdgeCtrl)	    

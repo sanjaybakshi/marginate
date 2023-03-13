@@ -1,6 +1,7 @@
 import Ttool         from "../libs/Ttool.js"
 import Tstroke       from "../libs/Tstroke.js"
-import Tpointer       from "../libs/Tpointer.js";
+import Tpointer      from "../libs/Tpointer.js";
+import TimageUtils   from "../libs/TimageUtils.js";
 
 import TplanckWorld   from "../planck/TplanckWorld.js";
 import TplanckObject  from "../planck/TplanckObject.js";
@@ -45,7 +46,7 @@ class TaddObjectTool extends Ttool
 
 	let pointerInfo = Tpointer.getPointer(e)
 	this._strokeStarted = true
-	this.fCurrentStroke.pushStrokePt({x:pointerInfo.x,y:pointerInfo.y}, pointerInfo.pressure)		
+	this.fCurrentStroke.pushStrokePt(pointerInfo)
     }
 
     pointerMove(e)
@@ -55,17 +56,18 @@ class TaddObjectTool extends Ttool
 	if (this._strokeStarted) {
 	    let pointerInfo = Tpointer.getPointer(e)
 	    
-	    this.fCurrentStroke.pushStrokePt({x:pointerInfo.x,y:pointerInfo.y}, pointerInfo.pressure)
-
+	    this.fCurrentStroke.pushStrokePt(pointerInfo)
 	}
 	
     }
 
-    pointerUp(e)
+    async pointerUp(e)
     {
 	super.pointerUp(e)
 
 	if (this._strokeStarted) {
+
+	    
 	    // Figure out the box.
 	    //
 	    let box = this.fCurrentStroke.axisAlignedBox()
@@ -78,11 +80,41 @@ class TaddObjectTool extends Ttool
 		//
 		if (width > 5 && height > 5) {
 
-		    fModel.addObject({pos: pos,
-				      width: width,
-				      height: height,
-				      currentFrame: fModel.getCurrentFrame(),
-				      objType: this._objType})
+		    let obj = fModel.addObject({pos: pos,
+						width: width,
+						height: height,
+						currentFrame: fModel.getCurrentFrame(),
+						objType: this._objType})
+
+		    // Draw the stroke in the object.
+		    //
+
+		    // Lifted this code from TbrushTool
+		    // This should be put in a consolidated place (like in Tstroke) ?
+		    //
+
+
+		    // transform the stroke points to the coordinates on the image.
+		    //
+		    let bCenter = obj.getCenterInPixels()
+		    let left = bCenter.x - obj.widthInPixels()  / 2
+		    let top  = bCenter.y - obj.heightInPixels() / 2
+		    
+		    // Need to clone this as translating will affect stroke
+		    //
+		    let s = this.fCurrentStroke.clone()
+		    s.translate(left, top)
+	    
+
+		    let sprite = obj.sprite()
+		    if (sprite == null) {
+			sprite = TimageUtils.makeImage(obj._widthPixels, obj._heightPixels)		
+		    }
+	    
+		    //let strokedImg = await s.drawOnImage(sprite, obj._widthPixels, obj._heightPixels)
+		    let strokedImg = await s.drawOnObjectBorder(sprite, obj._widthPixels, obj._heightPixels)
+		    fModel.editObject(obj, {sprite: strokedImg})
+		    
 		}
 	    }
 	}

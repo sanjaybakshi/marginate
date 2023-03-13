@@ -11,7 +11,7 @@ class TmarginateModel {
     constructor()
     {
 	this.fStrokeColor   = "#0000ff"
-	this.fStrokeSize    = 2.0;
+	this.fStrokeSize    = 4.0;
 	this.fStrokeOpacity = 100;
 
 

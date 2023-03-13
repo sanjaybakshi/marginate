@@ -90,8 +90,8 @@ class TmarginateCanvas extends Tcanvas
 	if (img != null) {
 	    this.fContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, wh.width, wh.height)	    
 	    this.fLastFrameImage = img
-	} 
 
+	} 
 	fModel.fPlanckWorld.draw(this.fContext, false)
 
 

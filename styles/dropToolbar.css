@@ -1,7 +1,7 @@
 @import './vars.css';
 
 
-.jointType-menu-container {
+.dropType-menu-container {
 
     display:          none;            /* Hidden by default */
     position:         absolute;        /* Stay in place */
@@ -12,6 +12,17 @@
     border-radius: 12px;
     box-shadow: 0px 3px 15px rgba(0,0,0,0.2);
 }
+
+
+/*
+I THINK EVERYTHING BELOW THIS COMMENT CAN BE DELETED!
+*/
+
+
+
+
+
+
 
 
 /* This is here for debugging */
